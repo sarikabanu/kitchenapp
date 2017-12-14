@@ -2,6 +2,9 @@
   "name": "Kitchen-Master",
   "private": true,
   "version": "0.0.0",
+  "engines": {
+    "node": "8.2.1"
+  }
   "description": "a Sails application",
   "keywords": [],
   "dependencies": {
