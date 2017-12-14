@@ -1,0 +1,148 @@
+
+<div class="container-fluid">
+  <div class="row">
+
+    <% include index %>
+
+    <main role="main" class="col-sm-9 ml-sm-auto col-md-10 pt-3">
+      <h1>Balance of Associated Items</h1>
+
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Title</th>
+              <th>Description</th>
+              <th>Associated Item</th>
+              <th>Net Balance</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% allAssocItemsBalance.forEach(function(assocItemsBalance){ %>
+              <tr id="assocItemsBalance-<%= assocItemsBalance.id %>">
+                <td>
+                  <%= assocItemsBalance.id %>
+                </td>
+                <td>
+                  <span><%= assocItemsBalance.title %></span>
+                  <input id="assocItemsBalance-title-<%= assocItemsBalance.id %>" class="d-none" value="<%= assocItemsBalance.title %>"/>
+                </td>
+                <td>
+                  <span><%= assocItemsBalance.description %></span>
+                  <input id="assocItemsBalance-description-<%= assocItemsBalance.id %>" class="d-none" value="<%= assocItemsBalance.description %>"/>
+                </td>
+                <td>
+                  <span><%= assocItemsBalance.substance.title %></span>
+                  <select id="assocItemsBalance-substance-<%= assocItemsBalance.id %>" class="d-none" value="<%= assocItemsBalance.substance.id %>">
+                    <% assocItems.forEach(function(substance){ %>
+                      <option value="<%= substance.id %>" <% if(assocItemsBalance.substance.id == substance.id){ %> selected <% }%> ><%= substance.title %></option>
+                    <% }) %>
+                  </select>
+                </td>
+                <td>
+                  <span><%= assocItemsBalance.net_quantity %></span>
+                  <input id="assocItemsBalance-net_quantity-<%= assocItemsBalance.id %>" class="d-none" value="<%= assocItemsBalance.net_quantity %>"/>
+                  <span><%= measurementsMap[assocItemsBalance.substance.measurement] %></span>
+                </td>
+                <td>
+                  <a id="edit-<%= assocItemsBalance.id %>" class="btn btn-small btn-warning d-none" href="#" onclick="editAssocItemsBalance(<%= assocItemsBalance.id %>);">Edit</a>
+                  <a id="save-<%= assocItemsBalance.id %>" class="btn btn-small btn-secondary d-none" href="#" onclick="saveAssocItemsBalance(<%= assocItemsBalance.id %>);">Save</a>
+                  <a id="cancel-<%= assocItemsBalance.id %>" class="btn btn-small btn-light d-none" href="#" onclick="cancelEditAssocItemsBalance(<%= assocItemsBalance.id %>);">Cancel</a>
+                  <a id="delete-<%= assocItemsBalance.id %>" class="btn btn-small btn-danger d-none" href="#" onclick="deleteAssocItemsBalance(<%= assocItemsBalance.id %>);">Delete</a>
+                </td>
+              </tr>
+            <% }) %>
+            <tr class="d-none">
+              <td><input id="assocItemsBalance-id" class="d-none"/></td>
+              <td><input id="assocItemsBalance-title" /></td>
+              <td><input id="assocItemsBalance-description" /></td>
+              <td>
+                <select id="assocItemsBalance-substance" class="">
+                  <% assocItems.forEach(function(substance){ %>
+                    <option value="<%= substance.id %>" ><%= substance.title %></option>
+                  <% }) %>
+                </select>
+              </td>
+              <td><input id="assocItemsBalance-net_quantity" /></td>
+              <td>
+                <a id="addNew" class="btn btn-small btn-primary" href="#" onclick="addNewAssocItemsBalance();">Add New</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+
+  </div>
+</div>
+
+<script>
+  function addNewAssocItemsBalance(){
+    var data = {
+      title: $("input#assocItemsBalance-title").val(),
+      description: $("input#assocItemsBalance-description").val(),
+      substance: $("select#assocItemsBalance-substance").val(),
+      net_quantity: $("input#assocItemsBalance-net_quantity").val()
+    };
+    $.ajax({
+      type: "POST",
+      url: '/net_stock',
+      data: JSON.stringify(data),
+      contentType:"application/json; charset=utf-8",
+      dataType:"json",
+      success: function() {
+        location.reload();
+      }
+    });
+  }
+
+  function deleteAssocItemsBalance(id){
+    $.ajax({
+      type: "DELETE",
+      url: '/net_stock/' + id,
+      success: function() {
+        location.reload();
+      }
+    });
+  }
+
+  function editAssocItemsBalance(id){
+    $("tr#assocItemsBalance-" + id + " input").removeClass('d-none');
+    $("tr#assocItemsBalance-" + id + " select").removeClass('d-none');
+    $("tr#assocItemsBalance-" + id + " span").addClass('d-none');
+    $("a#edit-" + id).addClass('d-none');
+    $("a#delete-" + id).addClass('d-none');
+    $("a#save-" + id).removeClass('d-none');
+    $("a#cancel-" + id).removeClass('d-none');
+  }
+
+  function cancelEditAssocItemsBalance(id){
+    $("tr#assocItemsBalance-" + id + " input").addClass('d-none');
+    $("tr#assocItemsBalance-" + id + " select").addClass('d-none');
+    $("tr#assocItemsBalance-" + id + " span").removeClass('d-none');
+    $("a#edit-" + id).removeClass('d-none');
+    $("a#delete-" + id).removeClass('d-none');
+    $("a#save-" + id).addClass('d-none');
+    $("a#cancel-" + id).addClass('d-none');
+  }
+
+  function saveAssocItemsBalance(id) {
+    var data = {
+      id: id,
+      title: $("input#assocItemsBalance-title-"+id).val(),
+      description: $("input#assocItemsBalance-description-"+id).val(),
+      substance: $("select#assocItemsBalance-substance-"+id).val(),
+      net_quantity: $("input#assocItemsBalance-net_quantity-"+id).val(),
+    };
+    $.ajax({
+      type: "PUT",
+      url: '/net_stock/' + id,
+      data: data,
+      success: function() {
+        location.reload();
+      }
+    });
+  }
+</script>

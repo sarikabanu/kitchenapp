@@ -1,0 +1,148 @@
+
+<div class="container-fluid">
+  <div class="row">
+
+    <% include index %>
+
+    <main role="main" class="col-sm-9 ml-sm-auto col-md-10 pt-3">
+      <h1>Balance of Basic Ingredients</h1>
+
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Title</th>
+              <th>Description</th>
+              <th>Basic Ingredient</th>
+              <th>Net Balance</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% allBasicIngredsBalance.forEach(function(basicIngredsBalance){ %>
+              <tr id="basicIngredsBalance-<%= basicIngredsBalance.id %>">
+                <td>
+                  <%= basicIngredsBalance.id %>
+                </td>
+                <td>
+                  <span><%= basicIngredsBalance.title %></span>
+                  <input id="basicIngredsBalance-title-<%= basicIngredsBalance.id %>" class="d-none" value="<%= basicIngredsBalance.title %>"/>
+                </td>
+                <td>
+                  <span><%= basicIngredsBalance.description %></span>
+                  <input id="basicIngredsBalance-description-<%= basicIngredsBalance.id %>" class="d-none" value="<%= basicIngredsBalance.description %>"/>
+                </td>
+                <td>
+                  <span><%= basicIngredsBalance.substance.title %></span>
+                  <select id="basicIngredsBalance-substance-<%= basicIngredsBalance.id %>" class="d-none" value="<%= basicIngredsBalance.substance.id %>">
+                    <% basicIngreds.forEach(function(substance){ %>
+                      <option value="<%= substance.id %>" <% if(basicIngredsBalance.substance.id == substance.id){ %> selected <% }%> ><%= substance.title %></option>
+                    <% }) %>
+                  </select>
+                </td>
+                <td>
+                  <span><%= basicIngredsBalance.net_quantity %></span>
+                  <input id="basicIngredsBalance-net_quantity-<%= basicIngredsBalance.id %>" class="d-none" value="<%= basicIngredsBalance.net_quantity %>"/>
+                  <span><%= measurementsMap[basicIngredsBalance.substance.measurement] %></span>
+                </td>
+                <td>
+                  <a id="edit-<%= basicIngredsBalance.id %>" class="btn btn-small btn-warning d-none" href="#" onclick="editBasicIngredsBalance(<%= basicIngredsBalance.id %>);">Edit</a>
+                  <a id="save-<%= basicIngredsBalance.id %>" class="btn btn-small btn-secondary d-none" href="#" onclick="saveBasicIngredsBalance(<%= basicIngredsBalance.id %>);">Save</a>
+                  <a id="cancel-<%= basicIngredsBalance.id %>" class="btn btn-small btn-light d-none" href="#" onclick="cancelEditBasicIngredsBalance(<%= basicIngredsBalance.id %>);">Cancel</a>
+                  <a id="delete-<%= basicIngredsBalance.id %>" class="btn btn-small btn-danger d-none" href="#" onclick="deleteBasicIngredsBalance(<%= basicIngredsBalance.id %>);">Delete</a>
+                </td>
+              </tr>
+            <% }) %>
+            <tr class="d-none">
+              <td><input id="basicIngredsBalance-id" class="d-none"/></td>
+              <td><input id="basicIngredsBalance-title" /></td>
+              <td><input id="basicIngredsBalance-description" /></td>
+              <td>
+                <select id="basicIngredsBalance-substance" class="">
+                  <% basicIngreds.forEach(function(substance){ %>
+                    <option value="<%= substance.id %>" ><%= substance.title %></option>
+                  <% }) %>
+                </select>
+              </td>
+              <td><input id="basicIngredsBalance-net_quantity" /></td>
+              <td>
+                <a id="addNew" class="btn btn-small btn-primary" href="#" onclick="addNewBasicIngredsBalance();">Add New</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+
+  </div>
+</div>
+
+<script>
+  function addNewBasicIngredsBalance(){
+    var data = {
+      title: $("input#basicIngredsBalance-title").val(),
+      description: $("input#basicIngredsBalance-description").val(),
+      substance: $("select#basicIngredsBalance-substance").val(),
+      net_quantity: $("input#basicIngredsBalance-net_quantity").val()
+    };
+    $.ajax({
+      type: "POST",
+      url: '/net_stock',
+      data: JSON.stringify(data),
+      contentType:"application/json; charset=utf-8",
+      dataType:"json",
+      success: function() {
+        location.reload();
+      }
+    });
+  }
+
+  function deleteBasicIngredsBalance(id){
+    $.ajax({
+      type: "DELETE",
+      url: '/net_stock/' + id,
+      success: function() {
+        location.reload();
+      }
+    });
+  }
+
+  function editBasicIngredsBalance(id){
+    $("tr#basicIngredsBalance-" + id + " input").removeClass('d-none');
+    $("tr#basicIngredsBalance-" + id + " select").removeClass('d-none');
+    $("tr#basicIngredsBalance-" + id + " span").addClass('d-none');
+    $("a#edit-" + id).addClass('d-none');
+    $("a#delete-" + id).addClass('d-none');
+    $("a#save-" + id).removeClass('d-none');
+    $("a#cancel-" + id).removeClass('d-none');
+  }
+
+  function cancelEditBasicIngredsBalance(id){
+    $("tr#basicIngredsBalance-" + id + " input").addClass('d-none');
+    $("tr#basicIngredsBalance-" + id + " select").addClass('d-none');
+    $("tr#basicIngredsBalance-" + id + " span").removeClass('d-none');
+    $("a#edit-" + id).removeClass('d-none');
+    $("a#delete-" + id).removeClass('d-none');
+    $("a#save-" + id).addClass('d-none');
+    $("a#cancel-" + id).addClass('d-none');
+  }
+
+  function saveBasicIngredsBalance(id) {
+    var data = {
+      id: id,
+      title: $("input#basicIngredsBalance-title-"+id).val(),
+      description: $("input#basicIngredsBalance-description-"+id).val(),
+      substance: $("select#basicIngredsBalance-substance-"+id).val(),
+      net_quantity: $("input#basicIngredsBalance-net_quantity-"+id).val(),
+    };
+    $.ajax({
+      type: "PUT",
+      url: '/net_stock/' + id,
+      data: data,
+      success: function() {
+        location.reload();
+      }
+    });
+  }
+</script>

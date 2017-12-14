@@ -1,0 +1,119 @@
+
+<div class="container-fluid">
+  <div class="row">
+
+    <% include index %>
+
+    <main role="main" class="col-sm-9 ml-sm-auto col-md-10 pt-3">
+      <h1>Measurements</h1>
+
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Name</th>
+              <th>Description</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% allMeasurements.forEach(function(measurement){ %>
+              <tr id="measurement-<%= measurement.id %>">
+                <td>
+                  <%= measurement.id %>
+                </td>
+                <td>
+                  <span><%= measurement.title %></span>
+                  <input id="measurement-title-<%= measurement.id %>" class="d-none" value="<%= measurement.title %>"/>
+                </td>
+                <td>
+                  <span><%= measurement.description %></span>
+                  <input id="measurement-description-<%= measurement.id %>" class="d-none" value="<%= measurement.description %>"/>
+                </td>
+                <td>
+                  <a id="edit-<%= measurement.id %>" class="btn btn-small btn-warning" href="#" onclick="editMeasurement(<%= measurement.id %>);">Edit</a>
+                  <a id="save-<%= measurement.id %>" class="btn btn-small btn-secondary d-none" href="#" onclick="saveMeasurement(<%= measurement.id %>);">Save</a>
+                  <a id="cancel-<%= measurement.id %>" class="btn btn-small btn-light d-none" href="#" onclick="cancelEditMeasurement(<%= measurement.id %>);">Cancel</a>
+                  <a id="delete-<%= measurement.id %>" class="btn btn-small btn-danger" href="#" onclick="deleteMeasurement(<%= measurement.id %>);">Delete</a>
+                </td>
+              </tr>
+            <% }) %>
+            <tr>
+              <td><input id="measurement-id" class="d-none"/></td>
+              <td><input id="measurement-title" /></td>
+              <td><input id="measurement-description" /></td>
+              <td>
+                <a id="addNew" class="btn btn-small btn-primary" href="#" onclick="addNewMeasurement();">Add New</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+
+  </div>
+</div>
+
+<script>
+  function addNewMeasurement(){
+    var data = {
+      title: $("input#measurement-title").val(),
+      description: $("input#measurement-description").val()
+    };
+    $.ajax({
+      type: "POST",
+      url: '/measurement',
+      data: JSON.stringify(data),
+      contentType:"application/json; charset=utf-8",
+      dataType:"json",
+      success: function() {
+        location.reload();
+      }
+    });
+  }
+
+  function deleteMeasurement(id){
+    $.ajax({
+      type: "DELETE",
+      url: '/measurement/' + id,
+      success: function() {
+        location.reload();
+      }
+    });
+  }
+
+  function editMeasurement(id){
+    $("tr#measurement-" + id + " input").removeClass('d-none');
+    $("tr#measurement-" + id + " span").addClass('d-none');
+    $("a#edit-" + id).addClass('d-none');
+    $("a#delete-" + id).addClass('d-none');
+    $("a#save-" + id).removeClass('d-none');
+    $("a#cancel-" + id).removeClass('d-none');
+  }
+
+  function cancelEditMeasurement(id){
+    $("tr#measurement-" + id + " input").addClass('d-none');
+    $("tr#measurement-" + id + " span").removeClass('d-none');
+    $("a#edit-" + id).removeClass('d-none');
+    $("a#delete-" + id).removeClass('d-none');
+    $("a#save-" + id).addClass('d-none');
+    $("a#cancel-" + id).addClass('d-none');
+  }
+
+  function saveMeasurement(id) {
+    var data = {
+      id: id,
+      title: $("input#measurement-title-"+id).val(),
+      description: $("input#measurement-description-"+id).val()
+    };
+    $.ajax({
+      type: "PUT",
+      url: '/measurement/' + id,
+      data: data,
+      success: function() {
+        location.reload();
+      }
+    });
+  }
+</script>

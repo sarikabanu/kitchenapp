@@ -1,0 +1,102 @@
+
+
+    <nav class="col-sm-3 col-md-2 d-none d-sm-block bg-light sidebar">
+
+      <ul class="nav nav-pills flex-column">
+        <li class="nav-item">
+          <a class="nav-link <% if(req.path == '/admin/menu_item'){ %> active <% } %>" href="/admin/menu_item" >Menu Items </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link <% if(req.path == '/admin/assoc_item'){ %> active <% } %>" href="/admin/assoc_item">Associated Items</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link <% if(req.path == '/admin/basic_ingred'){ %> active <% } %>" href="/admin/basic_ingred">Basic Ingredients</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link <% if(req.path == '/admin/intmd_item'){ %> active <% } %>" href="/admin/intmd_item">Intermediate Items / Left overs</a>
+        </li>
+      </ul>
+
+      <hr/>
+
+      <ul class="nav nav-pills flex-column">
+        <li class="nav-item">
+          <a class="nav-link <% if(req.path == '/admin/menu_item_balance'){ %> active <% } %>" href="/admin/menu_item_balance">Menu items balance</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link <% if(req.path == '/admin/assoc_item_balance'){ %> active <% } %>" href="/admin/assoc_item_balance">Associated items balance</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link <% if(req.path == '/admin/basic_ingred_balance'){ %> active <% } %>" href="/admin/basic_ingred_balance">Basic ingredients balance</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link <% if(req.path == '/admin/left_over_balance'){ %> active <% } %>" href="/admin/left_over_balance">Left overs balance</a>
+        </li>
+      </ul>
+
+      <hr/>
+
+      <ul class="nav nav-pills flex-column">
+        <li class="nav-item">
+          <a class="nav-link <% if(req.path == '/admin/menu_item_stock'){ %> active <% } %>" href="/admin/menu_item_stock">Menu items stock</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link <% if(req.path == '/admin/assoc_item_stock'){ %> active <% } %>" href="/admin/assoc_item_stock">Associated items stock</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link <% if(req.path == '/admin/basic_ingred_stock'){ %> active <% } %>" href="/admin/basic_ingred_stock">Basic ingredients stock</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link <% if(req.path == '/admin/left_over_stock'){ %> active <% } %>" href="/admin/left_over_stock">Left overs stock</a>
+        </li>
+      </ul>
+
+      <hr/>
+
+      <ul class="nav nav-pills flex-column">
+        <li class="nav-item">
+          <a class="nav-link <% if(req.path == '/admin/composition'){ %> active <% } %>" href="/admin/composition">Compositions</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link <% if(req.path == '/admin/recipe'){ %> active <% } %>" href="/admin/recipe">Recipes Sub Tasks</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link <% if(req.path == '/admin/step'){ %> active <% } %>" href="/admin/step">Recipe Steps</a>
+        </li>
+      </ul>
+
+      <hr/>
+
+      <ul class="nav nav-pills flex-column">
+        <li class="nav-item">
+          <a class="nav-link <% if(req.path == '/admin/menu'){ %> active <% } %>" href="/admin/menu">Menu of the day</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link <% if(req.path == '/admin/requirement'){ %> active <% } %>" href="/admin/requirement">Requirements</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link <% if(req.path == '/admin/job'){ %> active <% } %>" href="/admin/job">Jobs</a>
+        </li>
+      </ul>
+
+      <hr/>
+
+      <ul class="nav nav-pills flex-column">
+        <li class="nav-item">
+          <a class="nav-link <% if(req.path == '/admin/measurement'){ %> active <% } %>" href="/admin/measurement">Measurements</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link <% if(req.path == '/admin/station'){ %> active <% } %>" href="/admin/station">Stations</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link <% if(req.path == '/admin/status'){ %> active <% } %>" href="/admin/status">Status</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link <% if(req.path == '/admin/type'){ %> active <% } %>" href="/admin/type">Types</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link <% if(req.path == '/admin/category'){ %> active <% } %>" href="/admin/category">Categories</a>
+        </li>
+      </ul>
+
+    </nav>

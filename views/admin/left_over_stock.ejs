@@ -1,0 +1,164 @@
+
+<div class="container-fluid">
+  <div class="row">
+
+    <% include index %>
+
+    <main role="main" class="col-sm-9 ml-sm-auto col-md-10 pt-3">
+      <h1>Stock of Intermidate Items / Left Overs</h1>
+
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Description</th>
+              <th>Intermidate Item</th>
+              <th>Date</th>
+              <th>Quantity</th>
+              <th>Transaction type</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% allIntmdItemsStock.forEach(function(intmdItemsStock){ %>
+              <tr id="intmdItemsStock-<%= intmdItemsStock.id %>">
+                <td>
+                  <%= intmdItemsStock.id %>
+                </td>
+                <td>
+                  <span><%= intmdItemsStock.title %></span>
+                  <input id="intmdItemsStock-title-<%= intmdItemsStock.id %>" class="d-none" value="<%= intmdItemsStock.title %>"/>
+                </td>
+                <td>
+                  <span><%= intmdItemsStock.substance.title %></span>
+                  <select id="intmdItemsStock-substance-<%= intmdItemsStock.id %>" class="d-none" value="<%= intmdItemsStock.substance %>">
+                    <% intmdItems.forEach(function(substance){ %>
+                      <option value="<%= substance.id %>" <% if(intmdItemsStock.substance.id == substance.id){ %> selected <% }%> ><%= substance.title %></option>
+                    <% }) %>
+                  </select>
+                </td>
+                <td>
+                  <span><%= intmdItemsStock.date %></span>
+                  <input class="dateTimePickerField d-none" id="intmdItemsStock-date-<%= intmdItemsStock.id %>" class="d-none" value="<%= intmdItemsStock.date %>" data-provide="datepicker"/>
+                </td>
+                <td>
+                  <span><%= intmdItemsStock.quantity %></span>
+                  <input id="intmdItemsStock-quantity-<%= intmdItemsStock.id %>" class="d-none" value="<%= intmdItemsStock.quantity %>"/>
+                  <span><%= measurementsMap[intmdItemsStock.substance.measurement] %></span>
+                </td>
+                <td>
+                  <span><%= intmdItemsStock.transaction_type %></span>
+                  <select id="intmdItemsStock-transaction_type-<%= intmdItemsStock.id %>" class="d-none" value="<%= intmdItemsStock.transaction_type %>">
+                    <option value="1" <% if(intmdItemsStock.transaction_type == 1){ %> selected <% }%> >Added to Stock</option>
+                    <option value="-1" <% if(intmdItemsStock.transaction_type == -1){ %> selected <% }%> >Used from Stock</option>
+                  </select>
+                </td>
+                <td>
+                  <a id="edit-<%= intmdItemsStock.id %>" class="btn btn-small btn-warning" href="#" onclick="editIntmdItemsStock(<%= intmdItemsStock.id %>);">Edit</a>
+                  <a id="save-<%= intmdItemsStock.id %>" class="btn btn-small btn-secondary d-none" href="#" onclick="saveIntmdItemsStock(<%= intmdItemsStock.id %>);">Save</a>
+                  <a id="cancel-<%= intmdItemsStock.id %>" class="btn btn-small btn-light d-none" href="#" onclick="cancelEditIntmdItemsStock(<%= intmdItemsStock.id %>);">Cancel</a>
+                  <a id="delete-<%= intmdItemsStock.id %>" class="btn btn-small btn-danger" href="#" onclick="deleteIntmdItemsStock(<%= intmdItemsStock.id %>);">Delete</a>
+                </td>
+              </tr>
+            <% }) %>
+            <tr>
+              <td><input id="intmdItemsStock-id" class="d-none"/></td>
+              <td><input id="intmdItemsStock-title" /></td>
+              <td>
+                <select id="intmdItemsStock-substance" class="">
+                  <% intmdItems.forEach(function(substance){ %>
+                    <option value="<%= substance.id %>" ><%= substance.title %></option>
+                  <% }) %>
+                </select>
+              </td>
+              <td><input class="dateTimePickerField" id="intmdItemsStock-date" data-provide="datepicker"/></td>
+              <td><input id="intmdItemsStock-quantity" /></td>
+              <td>
+                <select id="intmdItemsStock-transaction_type" class="" >
+                  <option value="1" >Added to Stock</option>
+                  <option value="-1" >Used from Stock</option>
+                </select>
+              </td>
+              <td>
+                <a id="addNew" class="btn btn-small btn-primary" href="#" onclick="addNewIntmdItemsStock();">Add New</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+
+  </div>
+</div>
+
+<script>
+  function addNewIntmdItemsStock(){
+    var data = {
+      title: $("input#intmdItemsStock-title").val(),
+      substance: $("select#intmdItemsStock-substance").val(),
+      date: $("input#intmdItemsStock-date").val(),
+      quantity: $("input#intmdItemsStock-quantity").val(),
+      transaction_type: $("select#intmdItemsStock-transaction_type").val()
+    };
+    $.ajax({
+      type: "POST",
+      url: '/stock',
+      data: JSON.stringify(data),
+      contentType:"application/json; charset=utf-8",
+      dataType:"json",
+      success: function() {
+        location.reload();
+      }
+    });
+  }
+
+  function deleteIntmdItemsStock(id){
+    $.ajax({
+      type: "DELETE",
+      url: '/stock/' + id,
+      success: function() {
+        location.reload();
+      }
+    });
+  }
+
+  function editIntmdItemsStock(id){
+    $("tr#intmdItemsStock-" + id + " input").removeClass('d-none');
+    $("tr#intmdItemsStock-" + id + " select").removeClass('d-none');
+    $("tr#intmdItemsStock-" + id + " span").addClass('d-none');
+    $("a#edit-" + id).addClass('d-none');
+    $("a#delete-" + id).addClass('d-none');
+    $("a#save-" + id).removeClass('d-none');
+    $("a#cancel-" + id).removeClass('d-none');
+  }
+
+  function cancelEditIntmdItemsStock(id){
+    $("tr#intmdItemsStock-" + id + " input").addClass('d-none');
+    $("tr#intmdItemsStock-" + id + " select").addClass('d-none');
+    $("tr#intmdItemsStock-" + id + " span").removeClass('d-none');
+    $("a#edit-" + id).removeClass('d-none');
+    $("a#delete-" + id).removeClass('d-none');
+    $("a#save-" + id).addClass('d-none');
+    $("a#cancel-" + id).addClass('d-none');
+  }
+
+  function saveIntmdItemsStock(id) {
+    var data = {
+      id: id,
+      title: $("input#intmdItemsStock-title-"+id).val(),
+      substance: $("select#intmdItemsStock-substance-"+id).val(),
+      date: $("input#intmdItemsStock-date-"+id).val(),
+      quantity: $("input#intmdItemsStock-quantity-"+id).val(),
+      transaction_type: $("select#intmdItemsStock-transaction_type-"+id).val()
+    };
+    $.ajax({
+      type: "PUT",
+      url: '/stock/' + id,
+      data: data,
+      success: function() {
+        location.reload();
+      }
+    });
+  }
+</script>

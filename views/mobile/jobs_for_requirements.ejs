@@ -1,0 +1,38 @@
+
+
+    <% include requirements_for_station %>
+
+    <hr/>
+    <hr/>
+
+    <nav class="col-sm-6 col-md-3 d-none d-sm-block bg-light sidebar">
+
+      <ul class="nav nav-pills flex-column">
+        <li class="nav-item">
+          <h3>Jobs for selected Requirements.</h3>
+        </li>
+      </ul>
+
+      <hr/>
+
+        <% allJobsForRequirements.forEach(function(job){ %>
+          <ul class="nav nav-pills flex-column">
+            <li class="nav-item">
+              <span class="">Task to execute: <b><%= job.recipe.title %></b> </span>
+            </li>
+            <li class="nav-item">
+              <span class="">Required Quantity: <b><%= job.quantity %></b> </span><span><%= measurementsMap[job.recipe.substance.measurement] %></span>
+            </li>
+            <li class="nav-item">
+              <span class="">Required Date: <b><%= job.date %></b> </span>
+            </li>
+            <li class="nav-item">
+              <span class="">Completed Quantity: <b><%= job.completed %></b> </span><span><%= measurementsMap[job.recipe.substance.measurement] %></span>
+            </li>
+          </ul>
+        <% }) %>
+
+    </nav>
+
+  </div>
+</div>

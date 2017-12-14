@@ -1,0 +1,119 @@
+
+<div class="container-fluid">
+  <div class="row">
+
+    <% include index %>
+
+    <main role="main" class="col-sm-9 ml-sm-auto col-md-10 pt-3">
+      <h1>Status</h1>
+
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Name</th>
+              <th>Description</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% allStatus.forEach(function(status){ %>
+              <tr id="status-<%= status.id %>">
+                <td>
+                  <%= status.id %>
+                </td>
+                <td>
+                  <span><%= status.title %></span>
+                  <input id="status-title-<%= status.id %>" class="d-none" value="<%= status.title %>"/>
+                </td>
+                <td>
+                  <span><%= status.description %></span>
+                  <input id="status-description-<%= status.id %>" class="d-none" value="<%= status.description %>"/>
+                </td>
+                <td>
+                  <a id="edit-<%= status.id %>" class="btn btn-small btn-warning" href="#" onclick="editStatus(<%= status.id %>);">Edit</a>
+                  <a id="save-<%= status.id %>" class="btn btn-small btn-secondary d-none" href="#" onclick="saveStatus(<%= status.id %>);">Save</a>
+                  <a id="cancel-<%= status.id %>" class="btn btn-small btn-light d-none" href="#" onclick="cancelEditStatus(<%= status.id %>);">Cancel</a>
+                  <a id="delete-<%= status.id %>" class="btn btn-small btn-danger" href="#" onclick="deleteStatus(<%= status.id %>);">Delete</a>
+                </td>
+              </tr>
+            <% }) %>
+            <tr>
+              <td><input id="status-id" class="d-none"/></td>
+              <td><input id="status-title" /></td>
+              <td><input id="status-description" /></td>
+              <td>
+                <a id="addNew" class="btn btn-small btn-primary" href="#" onclick="addNewStatus();">Add New</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+
+  </div>
+</div>
+
+<script>
+  function addNewStatus(){
+    var data = {
+      title: $("input#status-title").val(),
+      description: $("input#status-description").val()
+    };
+    $.ajax({
+      type: "POST",
+      url: '/status',
+      data: JSON.stringify(data),
+      contentType:"application/json; charset=utf-8",
+      dataType:"json",
+      success: function() {
+        location.reload();
+      }
+    });
+  }
+
+  function deleteStatus(id){
+    $.ajax({
+      type: "DELETE",
+      url: '/status/' + id,
+      success: function() {
+        location.reload();
+      }
+    });
+  }
+
+  function editStatus(id){
+    $("tr#status-" + id + " input").removeClass('d-none');
+    $("tr#status-" + id + " span").addClass('d-none');
+    $("a#edit-" + id).addClass('d-none');
+    $("a#delete-" + id).addClass('d-none');
+    $("a#save-" + id).removeClass('d-none');
+    $("a#cancel-" + id).removeClass('d-none');
+  }
+
+  function cancelEditStatus(id){
+    $("tr#status-" + id + " input").addClass('d-none');
+    $("tr#status-" + id + " span").removeClass('d-none');
+    $("a#edit-" + id).removeClass('d-none');
+    $("a#delete-" + id).removeClass('d-none');
+    $("a#save-" + id).addClass('d-none');
+    $("a#cancel-" + id).addClass('d-none');
+  }
+
+  function saveStatus(id) {
+    var data = {
+      id: id,
+      title: $("input#status-title-"+id).val(),
+      description: $("input#status-description-"+id).val()
+    };
+    $.ajax({
+      type: "PUT",
+      url: '/status/' + id,
+      data: data,
+      success: function() {
+        location.reload();
+      }
+    });
+  }
+</script>

@@ -1,0 +1,119 @@
+
+<div class="container-fluid">
+  <div class="row">
+
+    <% include index %>
+
+    <main role="main" class="col-sm-9 ml-sm-auto col-md-10 pt-3">
+      <h1>Categories</h1>
+
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Name</th>
+              <th>Description</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% allCategory.forEach(function(category){ %>
+              <tr id="category-<%= category.id %>">
+                <td>
+                  <%= category.id %>
+                </td>
+                <td>
+                  <span><%= category.title %></span>
+                  <input id="category-title-<%= category.id %>" class="d-none" value="<%= category.title %>"/>
+                </td>
+                <td>
+                  <span><%= category.description %></span>
+                  <input id="category-description-<%= category.id %>" class="d-none" value="<%= category.description %>"/>
+                </td>
+                <td>
+                  <a id="edit-<%= category.id %>" class="btn btn-small btn-warning" href="#" onclick="editCategory(<%= category.id %>);">Edit</a>
+                  <a id="save-<%= category.id %>" class="btn btn-small btn-secondary d-none" href="#" onclick="saveCategory(<%= category.id %>);">Save</a>
+                  <a id="cancel-<%= category.id %>" class="btn btn-small btn-light d-none" href="#" onclick="cancelEditCategory(<%= category.id %>);">Cancel</a>
+                  <a id="delete-<%= category.id %>" class="btn btn-small btn-danger" href="#" onclick="deleteCategory(<%= category.id %>);">Delete</a>
+                </td>
+              </tr>
+            <% }) %>
+            <tr>
+              <td><input id="category-id" class="d-none"/></td>
+              <td><input id="category-title" /></td>
+              <td><input id="category-description" /></td>
+              <td>
+                <a id="addNew" class="btn btn-small btn-primary" href="#" onclick="addNewCategory();">Add New</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+
+  </div>
+</div>
+
+<script>
+  function addNewCategory(){
+    var data = {
+      title: $("input#category-title").val(),
+      description: $("input#category-description").val()
+    };
+    $.ajax({
+      type: "POST",
+      url: '/category',
+      data: JSON.stringify(data),
+      contentType:"application/json; charset=utf-8",
+      dataType:"json",
+      success: function() {
+        location.reload();
+      }
+    });
+  }
+
+  function deleteCategory(id){
+    $.ajax({
+      type: "DELETE",
+      url: '/category/' + id,
+      success: function() {
+        location.reload();
+      }
+    });
+  }
+
+  function editCategory(id){
+    $("tr#category-" + id + " input").removeClass('d-none');
+    $("tr#category-" + id + " span").addClass('d-none');
+    $("a#edit-" + id).addClass('d-none');
+    $("a#delete-" + id).addClass('d-none');
+    $("a#save-" + id).removeClass('d-none');
+    $("a#cancel-" + id).removeClass('d-none');
+  }
+
+  function cancelEditCategory(id){
+    $("tr#category-" + id + " input").addClass('d-none');
+    $("tr#category-" + id + " span").removeClass('d-none');
+    $("a#edit-" + id).removeClass('d-none');
+    $("a#delete-" + id).removeClass('d-none');
+    $("a#save-" + id).addClass('d-none');
+    $("a#cancel-" + id).addClass('d-none');
+  }
+
+  function saveCategory(id) {
+    var data = {
+      id: id,
+      title: $("input#category-title-"+id).val(),
+      description: $("input#category-description-"+id).val()
+    };
+    $.ajax({
+      type: "PUT",
+      url: '/category/' + id,
+      data: data,
+      success: function() {
+        location.reload();
+      }
+    });
+  }
+</script>

@@ -1,0 +1,43 @@
+
+
+
+    <hr/>
+
+
+    <nav class="col-sm-6 col-md-3 d-none d-sm-block bg-light sidebar">
+
+      <ul class="nav nav-pills flex-column">
+        <li class="nav-item">
+          <h3>Requirements For selected Station</h3>
+        </li>
+      </ul>
+
+      <hr/>
+
+        <% allRequirementsForStation.forEach(function(requirement){ %>
+          <ul class="nav nav-pills flex-column">
+            <li class="nav-item">
+              <a class="nav-link <% if(selectedRequirement == requirement.id){ %> active <% } %>"
+                href="/mobile/jobs_for_requirements?selectedStation=<%=selectedStation%>&selectedRequirement=<%=requirement.id%>&selectedSubstance=<%=requirement.substance.id%>">
+                Click to load jobs related to this requirement.
+              </a>
+            </li>
+            <li class="nav-item">
+              <span class="">Required Material/Dish: <b><%= requirement.substance.title %></b> </span>
+            </li>
+            <li class="nav-item">
+              <span class="">Required Quantity: <b><%= requirement.quantity %></b> </span><span><%= measurementsMap[requirement.substance.measurement] %></span>
+            </li>
+            <li class="nav-item">
+              <span class="">Required Date: <b><%= requirement.date %></b> </span>
+            </li>
+            <li class="nav-item">
+              <span class="">Completed Quantity: <b><%= requirement.completed %></b> </span><span><%= measurementsMap[requirement.substance.measurement] %></span>
+            </li>
+          </ul>
+        <% }) %>
+
+    </nav>
+
+  </div>
+</div>

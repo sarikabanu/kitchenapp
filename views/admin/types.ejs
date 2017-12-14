@@ -1,0 +1,119 @@
+
+<div class="container-fluid">
+  <div class="row">
+
+    <% include index %>
+
+    <main role="main" class="col-sm-9 ml-sm-auto col-md-10 pt-3">
+      <h1>Types</h1>
+
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Name</th>
+              <th>Description</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% allTypes.forEach(function(type){ %>
+              <tr id="type-<%= type.id %>">
+                <td>
+                  <%= type.id %>
+                </td>
+                <td>
+                  <span><%= type.title %></span>
+                  <input id="type-title-<%= type.id %>" class="d-none" value="<%= type.title %>"/>
+                </td>
+                <td>
+                  <span><%= type.description %></span>
+                  <input id="type-description-<%= type.id %>" class="d-none" value="<%= type.description %>"/>
+                </td>
+                <td>
+                  <a id="edit-<%= type.id %>" class="btn btn-small btn-warning" href="#" onclick="editType(<%= type.id %>);">Edit</a>
+                  <a id="save-<%= type.id %>" class="btn btn-small btn-secondary d-none" href="#" onclick="saveType(<%= type.id %>);">Save</a>
+                  <a id="cancel-<%= type.id %>" class="btn btn-small btn-light d-none" href="#" onclick="cancelEditType(<%= type.id %>);">Cancel</a>
+                  <a id="delete-<%= type.id %>" class="btn btn-small btn-danger" href="#" onclick="deleteType(<%= type.id %>);">Delete</a>
+                </td>
+              </tr>
+            <% }) %>
+            <tr>
+              <td><input id="type-id" class="d-none"/></td>
+              <td><input id="type-title" /></td>
+              <td><input id="type-description" /></td>
+              <td>
+                <a id="addNew" class="btn btn-small btn-primary" href="#" onclick="addNewType();">Add New</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+
+  </div>
+</div>
+
+<script>
+  function addNewType(){
+    var data = {
+      title: $("input#type-title").val(),
+      description: $("input#type-description").val()
+    };
+    $.ajax({
+      type: "POST",
+      url: '/type',
+      data: JSON.stringify(data),
+      contentType:"application/json; charset=utf-8",
+      dataType:"json",
+      success: function() {
+        location.reload();
+      }
+    });
+  }
+
+  function deleteType(id){
+    $.ajax({
+      type: "DELETE",
+      url: '/type/' + id,
+      success: function() {
+        location.reload();
+      }
+    });
+  }
+
+  function editType(id){
+    $("tr#type-" + id + " input").removeClass('d-none');
+    $("tr#type-" + id + " span").addClass('d-none');
+    $("a#edit-" + id).addClass('d-none');
+    $("a#delete-" + id).addClass('d-none');
+    $("a#save-" + id).removeClass('d-none');
+    $("a#cancel-" + id).removeClass('d-none');
+  }
+
+  function cancelEditType(id){
+    $("tr#type-" + id + " input").addClass('d-none');
+    $("tr#type-" + id + " span").removeClass('d-none');
+    $("a#edit-" + id).removeClass('d-none');
+    $("a#delete-" + id).removeClass('d-none');
+    $("a#save-" + id).addClass('d-none');
+    $("a#cancel-" + id).addClass('d-none');
+  }
+
+  function saveType(id) {
+    var data = {
+      id: id,
+      title: $("input#type-title-"+id).val(),
+      description: $("input#type-description-"+id).val()
+    };
+    $.ajax({
+      type: "PUT",
+      url: '/type/' + id,
+      data: data,
+      success: function() {
+        location.reload();
+      }
+    });
+  }
+</script>

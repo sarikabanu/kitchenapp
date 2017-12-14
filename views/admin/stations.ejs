@@ -1,0 +1,119 @@
+
+<div class="container-fluid">
+  <div class="row">
+
+    <% include index %>
+
+    <main role="main" class="col-sm-9 ml-sm-auto col-md-10 pt-3">
+      <h1>Stations</h1>
+
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Name</th>
+              <th>Description</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% allStations.forEach(function(station){ %>
+              <tr id="station-<%= station.id %>">
+                <td>
+                  <%= station.id %>
+                </td>
+                <td>
+                  <span><%= station.title %></span>
+                  <input id="station-title-<%= station.id %>" class="d-none" value="<%= station.title %>"/>
+                </td>
+                <td>
+                  <span><%= station.description %></span>
+                  <input id="station-description-<%= station.id %>" class="d-none" value="<%= station.description %>"/>
+                </td>
+                <td>
+                  <a id="edit-<%= station.id %>" class="btn btn-small btn-warning" href="#" onclick="editStation(<%= station.id %>);">Edit</a>
+                  <a id="save-<%= station.id %>" class="btn btn-small btn-secondary d-none" href="#" onclick="saveStation(<%= station.id %>);">Save</a>
+                  <a id="cancel-<%= station.id %>" class="btn btn-small btn-light d-none" href="#" onclick="cancelEditStation(<%= station.id %>);">Cancel</a>
+                  <a id="delete-<%= station.id %>" class="btn btn-small btn-danger" href="#" onclick="deleteStation(<%= station.id %>);">Delete</a>
+                </td>
+              </tr>
+            <% }) %>
+            <tr>
+              <td><input id="station-id" class="d-none"/></td>
+              <td><input id="station-title" /></td>
+              <td><input id="station-description" /></td>
+              <td>
+                <a id="addNew" class="btn btn-small btn-primary" href="#" onclick="addNewStation();">Add New</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+
+  </div>
+</div>
+
+<script>
+  function addNewStation(){
+    var data = {
+      title: $("input#station-title").val(),
+      description: $("input#station-description").val()
+    };
+    $.ajax({
+      type: "POST",
+      url: '/station',
+      data: JSON.stringify(data),
+      contentType:"application/json; charset=utf-8",
+      dataType:"json",
+      success: function() {
+        location.reload();
+      }
+    });
+  }
+
+  function deleteStation(id){
+    $.ajax({
+      type: "DELETE",
+      url: '/station/' + id,
+      success: function() {
+        location.reload();
+      }
+    });
+  }
+
+  function editStation(id){
+    $("tr#station-" + id + " input").removeClass('d-none');
+    $("tr#station-" + id + " span").addClass('d-none');
+    $("a#edit-" + id).addClass('d-none');
+    $("a#delete-" + id).addClass('d-none');
+    $("a#save-" + id).removeClass('d-none');
+    $("a#cancel-" + id).removeClass('d-none');
+  }
+
+  function cancelEditStation(id){
+    $("tr#station-" + id + " input").addClass('d-none');
+    $("tr#station-" + id + " span").removeClass('d-none');
+    $("a#edit-" + id).removeClass('d-none');
+    $("a#delete-" + id).removeClass('d-none');
+    $("a#save-" + id).addClass('d-none');
+    $("a#cancel-" + id).addClass('d-none');
+  }
+
+  function saveStation(id) {
+    var data = {
+      id: id,
+      title: $("input#station-title-"+id).val(),
+      description: $("input#station-description-"+id).val()
+    };
+    $.ajax({
+      type: "PUT",
+      url: '/station/' + id,
+      data: data,
+      success: function() {
+        location.reload();
+      }
+    });
+  }
+</script>

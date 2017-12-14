@@ -1,0 +1,26 @@
+
+
+    <nav class="col-sm-6 col-md-3 d-none d-sm-block bg-light sidebar">
+
+      <% if(typeof stationsWithStatus == 'undefined' && stationsWithStatus.size() < 1){ %>
+        <ul class="nav nav-pills flex-column">
+          <li class="nav-item">
+            <a class="nav-link btn btn-danger" href="/mobile" >No Stations are available!</a>
+          </li>
+        </ul>
+
+        <hr/>
+      <% } else { %>
+
+        <ul class="nav nav-pills flex-column">
+          <% for (var stationId in stationsWithStatus) { %>
+            <li class="nav-item">
+              <a class="nav-link <% if(selectedStation == stationId){ %> active <% } %>" href="/mobile/requirements_for_station?selectedStation=<%=stationId%>"> <%= stationsWithStatus[stationId]['station']['title'] %> </a>
+              <span><%= stationsWithStatus[stationId]['status'] %></span>
+            </li>
+          <% } %>
+        </ul>
+
+      <% } %>
+
+    </nav>

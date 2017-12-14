@@ -1,0 +1,165 @@
+
+<div class="container-fluid">
+  <div class="row">
+
+    <% include index %>
+
+    <main role="main" class="col-sm-9 ml-sm-auto col-md-10 pt-3">
+      <h1>Recipe Steps for making any Dish.</h1>
+
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Title</th>
+              <th>Description</th>
+              <th>Dish</th>
+              <th>Sequence</th>
+              <th>Recipe Task</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% allSteps.forEach(function(step){ %>
+              <tr id="step-<%= step.id %>">
+                <td>
+                  <%= step.id %>
+                </td>
+                <td>
+                  <span><%= step.title %></span>
+                  <input id="step-title-<%= step.id %>" class="d-none" value="<%= step.title %>"/>
+                </td>
+                <td>
+                  <span><%= step.description %></span>
+                  <input id="step-description-<%= step.id %>" class="d-none" value="<%= step.description %>"/>
+                </td>
+                <td>
+                  <span><%= step.substance.title %></span>
+                  <select id="step-substance-<%= step.id %>" class="d-none" value="<%= step.substance.id %>">
+                    <% substances.forEach(function(substance){ %>
+                      <option value="<%= substance.id %>" <% if(step.substance.id == substance.id){ %> selected <% }%> ><%= substance.title %></option>
+                    <% }) %>
+                  </select>
+                </td>
+                <td>
+                  <span><%= step.sequence %></span>
+                  <input id="step-sequence-<%= step.id %>" class="d-none" value="<%= step.sequence %>"/>
+                </td>
+                <td>
+                  <span><%= step.recipe.title %></span>
+                  <select id="step-recipe-<%= step.id %>" class="d-none" value="<%= step.recipe.id %>">
+                    <% recipes.forEach(function(recipe){ %>
+                      <option value="<%= recipe.id %>" <% if(step.recipe.id == recipe.id){ %> selected <% }%> ><%= recipe.title %></option>
+                    <% }) %>
+                  </select>
+                </td>
+                <td>
+                  <a id="edit-<%= step.id %>" class="btn btn-small btn-warning" href="#" onclick="editStep(<%= step.id %>);">Edit</a>
+                  <a id="save-<%= step.id %>" class="btn btn-small btn-secondary d-none" href="#" onclick="saveStep(<%= step.id %>);">Save</a>
+                  <a id="cancel-<%= step.id %>" class="btn btn-small btn-light d-none" href="#" onclick="cancelEditStep(<%= step.id %>);">Cancel</a>
+                  <a id="delete-<%= step.id %>" class="btn btn-small btn-danger" href="#" onclick="deleteStep(<%= step.id %>);">Delete</a>
+                </td>
+              </tr>
+            <% }) %>
+            <tr>
+              <td><input id="step-id" class="d-none"/></td>
+              <td><input id="step-title" /></td>
+              <td><input id="step-description" /></td>
+              <td>
+                <select id="step-substance" class="">
+                  <% substances.forEach(function(substance){ %>
+                    <option value="<%= substance.id %>" ><%= substance.title %></option>
+                  <% }) %>
+                </select>
+              </td>
+              <td><input id="step-sequence" /></td>
+              <td>
+                <select id="step-recipe" class="">
+                  <% recipes.forEach(function(recipe){ %>
+                    <option value="<%= recipe.id %>" ><%= recipe.title %></option>
+                  <% }) %>
+                </select>
+              </td>
+              <td>
+                <a id="addNew" class="btn btn-small btn-primary" href="#" onclick="addNewStep();">Add New</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+
+  </div>
+</div>
+
+<script>
+  function addNewStep(){
+    var data = {
+      title: $("input#step-title").val(),
+      description: $("input#step-description").val(),
+      substance: $("select#step-substance").val(),
+      sequence: $("input#step-sequence").val(),
+      recipe: $("select#step-recipe").val(),
+    };
+    $.ajax({
+      type: "POST",
+      url: '/step',
+      data: JSON.stringify(data),
+      contentType:"application/json; charset=utf-8",
+      dataType:"json",
+      success: function() {
+        location.reload();
+      }
+    });
+  }
+
+  function deleteStep(id){
+    $.ajax({
+      type: "DELETE",
+      url: '/step/' + id,
+      success: function() {
+        location.reload();
+      }
+    });
+  }
+
+  function editStep(id){
+    $("tr#step-" + id + " input").removeClass('d-none');
+    $("tr#step-" + id + " select").removeClass('d-none');
+    $("tr#step-" + id + " span").addClass('d-none');
+    $("a#edit-" + id).addClass('d-none');
+    $("a#delete-" + id).addClass('d-none');
+    $("a#save-" + id).removeClass('d-none');
+    $("a#cancel-" + id).removeClass('d-none');
+  }
+
+  function cancelEditStep(id){
+    $("tr#step-" + id + " input").addClass('d-none');
+    $("tr#step-" + id + " select").addClass('d-none');
+    $("tr#step-" + id + " span").removeClass('d-none');
+    $("a#edit-" + id).removeClass('d-none');
+    $("a#delete-" + id).removeClass('d-none');
+    $("a#save-" + id).addClass('d-none');
+    $("a#cancel-" + id).addClass('d-none');
+  }
+
+  function saveStep(id) {
+    var data = {
+      id: id,
+      title: $("input#step-title-"+id).val(),
+      description: $("input#step-description-"+id).val(),
+      substance: $("select#step-substance-"+id).val(),
+      sequence: $("input#step-sequence-"+id).val(),
+      recipe: $("select#step-recipe-"+id).val(),
+    };
+    $.ajax({
+      type: "PUT",
+      url: '/step/' + id,
+      data: data,
+      success: function() {
+        location.reload();
+      }
+    });
+  }
+</script>

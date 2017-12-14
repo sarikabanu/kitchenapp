@@ -1,0 +1,167 @@
+
+<div class="container-fluid">
+  <div class="row">
+
+    <% include index %>
+
+    <main role="main" class="col-sm-9 ml-sm-auto col-md-10 pt-3">
+      <h1>Sub-tasks for Recipe making</h1>
+
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Title</th>
+              <th>Description</th>
+              <th>End Product</th>
+              <th>Task Duration</th>
+              <th>Station</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% allRecipes.forEach(function(recipe){ %>
+              <tr id="recipe-<%= recipe.id %>">
+                <td>
+                  <%= recipe.id %>
+                </td>
+                <td>
+                  <span><%= recipe.title %></span>
+                  <input id="recipe-title-<%= recipe.id %>" class="d-none" value="<%= recipe.title %>"/>
+                </td>
+                <td>
+                  <span><%= recipe.description %></span>
+                  <input id="recipe-description-<%= recipe.id %>" class="d-none" value="<%= recipe.description %>"/>
+                </td>
+                <td>
+                  <span><%= recipe.substance.title %></span>
+                  <select id="recipe-substance-<%= recipe.id %>" class="d-none" value="<%= recipe.substance.id %>">
+                    <option value="" >---</option>
+                    <% substances.forEach(function(substance){ %>
+                      <option value="<%= substance.id %>" <% if(recipe.substance.id == substance.id){ %> selected <% }%> ><%= substance.title %></option>
+                    <% }) %>
+                  </select>
+                </td>
+                <td>
+                  <span><%= recipe.duration %></span>
+                  <input id="recipe-duration-<%= recipe.id %>" class="d-none" value="<%= recipe.duration %>"/>
+                </td>
+                <td>
+                  <span><%= recipe.station.title %></span>
+                  <select id="recipe-station-<%= recipe.id %>" class="d-none" value="<%= recipe.station.id %>">
+                    <% stations.forEach(function(station){ %>
+                      <option value="<%= station.id %>" <% if(recipe.station.id == station.id){ %> selected <% }%> ><%= station.title %></option>
+                    <% }) %>
+                  </select>
+                </td>
+                <td>
+                  <a id="edit-<%= recipe.id %>" class="btn btn-small btn-warning" href="#" onclick="editRecipe(<%= recipe.id %>);">Edit</a>
+                  <a id="save-<%= recipe.id %>" class="btn btn-small btn-secondary d-none" href="#" onclick="saveRecipe(<%= recipe.id %>);">Save</a>
+                  <a id="cancel-<%= recipe.id %>" class="btn btn-small btn-light d-none" href="#" onclick="cancelEditRecipe(<%= recipe.id %>);">Cancel</a>
+                  <a id="delete-<%= recipe.id %>" class="btn btn-small btn-danger" href="#" onclick="deleteRecipe(<%= recipe.id %>);">Delete</a>
+                </td>
+              </tr>
+            <% }) %>
+            <tr>
+              <td><input id="recipe-id" class="d-none"/></td>
+              <td><input id="recipe-title" /></td>
+              <td><input id="recipe-description" /></td>
+              <td>
+                <select id="recipe-substance" class="">
+                  <option value="" >---</option>
+                  <% substances.forEach(function(substance){ %>
+                    <option value="<%= substance.id %>" ><%= substance.title %></option>
+                  <% }) %>
+                </select>
+              </td>
+              <td><input id="recipe-duration" /></td>
+              <td>
+                <select id="recipe-station" class="">
+                  <% stations.forEach(function(station){ %>
+                    <option value="<%= station.id %>" ><%= station.title %></option>
+                  <% }) %>
+                </select>
+              </td>
+              <td>
+                <a id="addNew" class="btn btn-small btn-primary" href="#" onclick="addNewRecipe();">Add New</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+
+  </div>
+</div>
+
+<script>
+  function addNewRecipe(){
+    var data = {
+      title: $("input#recipe-title").val(),
+      description: $("input#recipe-description").val(),
+      substance: $("select#recipe-substance").val(),
+      duration: $("input#recipe-duration").val(),
+      station: $("select#recipe-station").val(),
+    };
+    $.ajax({
+      type: "POST",
+      url: '/recipe',
+      data: JSON.stringify(data),
+      contentType:"application/json; charset=utf-8",
+      dataType:"json",
+      success: function() {
+        location.reload();
+      }
+    });
+  }
+
+  function deleteRecipe(id){
+    $.ajax({
+      type: "DELETE",
+      url: '/recipe/' + id,
+      success: function() {
+        location.reload();
+      }
+    });
+  }
+
+  function editRecipe(id){
+    $("tr#recipe-" + id + " input").removeClass('d-none');
+    $("tr#recipe-" + id + " select").removeClass('d-none');
+    $("tr#recipe-" + id + " span").addClass('d-none');
+    $("a#edit-" + id).addClass('d-none');
+    $("a#delete-" + id).addClass('d-none');
+    $("a#save-" + id).removeClass('d-none');
+    $("a#cancel-" + id).removeClass('d-none');
+  }
+
+  function cancelEditRecipe(id){
+    $("tr#recipe-" + id + " input").addClass('d-none');
+    $("tr#recipe-" + id + " select").addClass('d-none');
+    $("tr#recipe-" + id + " span").removeClass('d-none');
+    $("a#edit-" + id).removeClass('d-none');
+    $("a#delete-" + id).removeClass('d-none');
+    $("a#save-" + id).addClass('d-none');
+    $("a#cancel-" + id).addClass('d-none');
+  }
+
+  function saveRecipe(id) {
+    var data = {
+      id: id,
+      title: $("input#recipe-title-"+id).val(),
+      description: $("input#recipe-description-"+id).val(),
+      substance: $("select#recipe-substance-"+id).val(),
+      duration: $("input#recipe-duration-"+id).val(),
+      station: $("select#recipe-station-"+id).val(),
+    };
+    $.ajax({
+      type: "PUT",
+      url: '/recipe/' + id,
+      data: data,
+      success: function() {
+        location.reload();
+      }
+    });
+  }
+</script>
