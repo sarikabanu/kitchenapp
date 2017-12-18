@@ -32,10 +32,10 @@
                   <input id="type-description-<%= type.id %>" class="d-none" value="<%= type.description %>"/>
                 </td>
                 <td>
-                  <a id="edit-<%= type.id %>" class="btn btn-small btn-warning" href="#" onclick="editType(<%= type.id %>);">Edit</a>
-                  <a id="save-<%= type.id %>" class="btn btn-small btn-secondary d-none" href="#" onclick="saveType(<%= type.id %>);">Save</a>
-                  <a id="cancel-<%= type.id %>" class="btn btn-small btn-light d-none" href="#" onclick="cancelEditType(<%= type.id %>);">Cancel</a>
-                  <a id="delete-<%= type.id %>" class="btn btn-small btn-danger" href="#" onclick="deleteType(<%= type.id %>);">Delete</a>
+                  <a id="edit-<%= type.id %>" class="btn btn-small btn-warning"  onclick="editType(<%= type.id %>);">Edit</a>
+                  <a id="save-<%= type.id %>" class="btn btn-small btn-secondary d-none"  onclick="saveType(<%= type.id %>);">Save</a>
+                  <a id="cancel-<%= type.id %>" class="btn btn-small btn-light d-none"  onclick="cancelEditType(<%= type.id %>);">Cancel</a>
+                  <a id="delete-<%= type.id %>" class="btn btn-small btn-danger"  onclick="deleteType(<%= type.id %>);">Delete</a>
                 </td>
               </tr>
             <% }) %>
@@ -44,7 +44,7 @@
               <td><input id="type-title" /></td>
               <td><input id="type-description" /></td>
               <td>
-                <a id="addNew" class="btn btn-small btn-primary" href="#" onclick="addNewType();">Add New</a>
+                <a id="addNew" class="btn btn-small btn-primary"  onclick="addNewType();">Add New</a>
               </td>
             </tr>
           </tbody>

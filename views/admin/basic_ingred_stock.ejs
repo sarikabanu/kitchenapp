@@ -39,8 +39,8 @@
                   </select>
                 </td>
                 <td>
-                  <span><%= basicIngredsStock.date %></span>
-                  <input class="dateTimePickerField d-none" id="basicIngredsStock-date-<%= basicIngredsStock.id %>" class="d-none" value="<%= basicIngredsStock.date %>" data-provide="datepicker"/>
+                  <span><%= sails.moment(basicIngredsStock.date).format('DD MMM YYYY') %></span>
+                  <input class="dateTimePickerField d-none" id="basicIngredsStock-date-<%= basicIngredsStock.id %>" class="d-none" value="<%= sails.moment(basicIngredsStock.date).format('DD MMM YYYY') %>" data-provide="datepicker"/>
                 </td>
                 <td>
                   <span><%= basicIngredsStock.quantity %></span>
@@ -55,10 +55,10 @@
                   </select>
                 </td>
                 <td>
-                  <a id="edit-<%= basicIngredsStock.id %>" class="btn btn-small btn-warning" href="#" onclick="editBasicIngredsStock(<%= basicIngredsStock.id %>);">Edit</a>
-                  <a id="save-<%= basicIngredsStock.id %>" class="btn btn-small btn-secondary d-none" href="#" onclick="saveBasicIngredsStock(<%= basicIngredsStock.id %>);">Save</a>
-                  <a id="cancel-<%= basicIngredsStock.id %>" class="btn btn-small btn-light d-none" href="#" onclick="cancelEditBasicIngredsStock(<%= basicIngredsStock.id %>);">Cancel</a>
-                  <a id="delete-<%= basicIngredsStock.id %>" class="btn btn-small btn-danger" href="#" onclick="deleteBasicIngredsStock(<%= basicIngredsStock.id %>);">Delete</a>
+                  <a id="edit-<%= basicIngredsStock.id %>" class="btn btn-small btn-warning d-none"  onclick="editBasicIngredsStock(<%= basicIngredsStock.id %>);">Edit</a>
+                  <a id="save-<%= basicIngredsStock.id %>" class="btn btn-small btn-secondary d-none"  onclick="saveBasicIngredsStock(<%= basicIngredsStock.id %>);">Save</a>
+                  <a id="cancel-<%= basicIngredsStock.id %>" class="btn btn-small btn-light d-none"  onclick="cancelEditBasicIngredsStock(<%= basicIngredsStock.id %>);">Cancel</a>
+                  <a id="delete-<%= basicIngredsStock.id %>" class="btn btn-small btn-danger"  onclick="deleteBasicIngredsStock(<%= basicIngredsStock.id %>);">Delete</a>
                 </td>
               </tr>
             <% }) %>
@@ -81,7 +81,7 @@
                 </select>
               </td>
               <td>
-                <a id="addNew" class="btn btn-small btn-primary" href="#" onclick="addNewBasicIngredsStock();">Add New</a>
+                <a id="addNew" class="btn btn-small btn-primary"  onclick="addNewBasicIngredsStock();">Add New</a>
               </td>
             </tr>
           </tbody>

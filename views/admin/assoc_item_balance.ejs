@@ -47,10 +47,10 @@
                   <span><%= measurementsMap[assocItemsBalance.substance.measurement] %></span>
                 </td>
                 <td>
-                  <a id="edit-<%= assocItemsBalance.id %>" class="btn btn-small btn-warning d-none" href="#" onclick="editAssocItemsBalance(<%= assocItemsBalance.id %>);">Edit</a>
-                  <a id="save-<%= assocItemsBalance.id %>" class="btn btn-small btn-secondary d-none" href="#" onclick="saveAssocItemsBalance(<%= assocItemsBalance.id %>);">Save</a>
-                  <a id="cancel-<%= assocItemsBalance.id %>" class="btn btn-small btn-light d-none" href="#" onclick="cancelEditAssocItemsBalance(<%= assocItemsBalance.id %>);">Cancel</a>
-                  <a id="delete-<%= assocItemsBalance.id %>" class="btn btn-small btn-danger d-none" href="#" onclick="deleteAssocItemsBalance(<%= assocItemsBalance.id %>);">Delete</a>
+                  <a id="edit-<%= assocItemsBalance.id %>" class="btn btn-small btn-warning d-none"  onclick="editAssocItemsBalance(<%= assocItemsBalance.id %>);">Edit</a>
+                  <a id="save-<%= assocItemsBalance.id %>" class="btn btn-small btn-secondary d-none"  onclick="saveAssocItemsBalance(<%= assocItemsBalance.id %>);">Save</a>
+                  <a id="cancel-<%= assocItemsBalance.id %>" class="btn btn-small btn-light d-none"  onclick="cancelEditAssocItemsBalance(<%= assocItemsBalance.id %>);">Cancel</a>
+                  <a id="delete-<%= assocItemsBalance.id %>" class="btn btn-small btn-danger d-none"  onclick="deleteAssocItemsBalance(<%= assocItemsBalance.id %>);">Delete</a>
                 </td>
               </tr>
             <% }) %>
@@ -67,7 +67,7 @@
               </td>
               <td><input id="assocItemsBalance-net_quantity" /></td>
               <td>
-                <a id="addNew" class="btn btn-small btn-primary" href="#" onclick="addNewAssocItemsBalance();">Add New</a>
+                <a id="addNew" class="btn btn-small btn-primary"  onclick="addNewAssocItemsBalance();">Add New</a>
               </td>
             </tr>
           </tbody>

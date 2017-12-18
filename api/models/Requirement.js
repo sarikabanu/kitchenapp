@@ -35,11 +35,11 @@ module.exports = {
       // defaultsTo: 'CURRENT_TIMESTAMP'
     },
     quantity: {
-      type: 'integer',
+      type: 'float',
       required: true
     },
     completed: {
-      type: 'integer',
+      type: 'float',
       required: false
     },
     status: {

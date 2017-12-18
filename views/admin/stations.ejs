@@ -32,10 +32,10 @@
                   <input id="station-description-<%= station.id %>" class="d-none" value="<%= station.description %>"/>
                 </td>
                 <td>
-                  <a id="edit-<%= station.id %>" class="btn btn-small btn-warning" href="#" onclick="editStation(<%= station.id %>);">Edit</a>
-                  <a id="save-<%= station.id %>" class="btn btn-small btn-secondary d-none" href="#" onclick="saveStation(<%= station.id %>);">Save</a>
-                  <a id="cancel-<%= station.id %>" class="btn btn-small btn-light d-none" href="#" onclick="cancelEditStation(<%= station.id %>);">Cancel</a>
-                  <a id="delete-<%= station.id %>" class="btn btn-small btn-danger" href="#" onclick="deleteStation(<%= station.id %>);">Delete</a>
+                  <a id="edit-<%= station.id %>" class="btn btn-small btn-warning"  onclick="editStation(<%= station.id %>);">Edit</a>
+                  <a id="save-<%= station.id %>" class="btn btn-small btn-secondary d-none"  onclick="saveStation(<%= station.id %>);">Save</a>
+                  <a id="cancel-<%= station.id %>" class="btn btn-small btn-light d-none"  onclick="cancelEditStation(<%= station.id %>);">Cancel</a>
+                  <a id="delete-<%= station.id %>" class="btn btn-small btn-danger"  onclick="deleteStation(<%= station.id %>);">Delete</a>
                 </td>
               </tr>
             <% }) %>
@@ -44,7 +44,7 @@
               <td><input id="station-title" /></td>
               <td><input id="station-description" /></td>
               <td>
-                <a id="addNew" class="btn btn-small btn-primary" href="#" onclick="addNewStation();">Add New</a>
+                <a id="addNew" class="btn btn-small btn-primary"  onclick="addNewStation();">Add New</a>
               </td>
             </tr>
           </tbody>

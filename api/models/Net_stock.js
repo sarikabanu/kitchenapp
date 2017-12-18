@@ -41,7 +41,7 @@ module.exports = {
       model: 'substance'
     },
     net_quantity: {
-      type: 'double',
+      type: 'float',
       required: true
     }
   }

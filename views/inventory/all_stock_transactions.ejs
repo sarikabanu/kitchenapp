@@ -1,0 +1,115 @@
+
+<div class="container-fluid">
+  <div class="row">
+
+    <main role="main" class="col-sm-12 ml-sm-auto col-md-12 pt-3">
+      <h1 class="">Stock of Basic Ingredients <a class="float-right" href="/inventory/inventory_balance" >Go back</a></h1>
+
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Description</th>
+              <th>Basic Ingredient</th>
+              <th>Date</th>
+              <th>Quantity</th>
+              <th>Transaction type</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% allBasicIngredsStock.forEach(function(basicIngredsStock, index){ %>
+              <tr id="basicIngredsStock-<%= basicIngredsStock.id %>">
+                <td>
+                  <%= index+1 %>
+                </td>
+                <td>
+                  <span><%= basicIngredsStock.title %></span>
+                </td>
+                <td>
+                  <span><%= basicIngredsStock.substance.title %></span>
+                </td>
+                <td>
+                  <span><%= sails.moment(basicIngredsStock.date).format('DD MMM YYYY') %></span>
+                </td>
+                <td>
+                  <span><%= basicIngredsStock.quantity %></span>
+                  <span><%= selectedMeasurement %></span>
+                </td>
+                <td>
+                  <span>
+                    <% if(basicIngredsStock.transaction_type == 1){ %>
+                      Added to Stock
+                    <% } else { %>
+                      Used from Stock
+                    <% } %>
+                  </span>
+                </td>
+                <td>
+                  <a id="delete-<%= basicIngredsStock.id %>" class="btn btn-small btn-danger d-none"  onclick="deleteBasicIngredsStock(<%= basicIngredsStock.id %>);">Delete</a>
+                </td>
+              </tr>
+            <% }) %>
+            <tr>
+              <td><input id="basicIngredsStock-id" class="d-none"/></td>
+              <td><input id="basicIngredsStock-title" /></td>
+              <td>
+                <input id="basicIngredsStock-substance" class="d-none" value="<%= selectedBasicIngred %>" />
+                <span><%= selectedBasicIngredTitle %></span>
+              </td>
+              <td><input class="dateTimePickerField" id="basicIngredsStock-date" data-provide="datepicker"/></td>
+              <td>
+                <input id="basicIngredsStock-quantity" />
+                <span><%= selectedMeasurement %></span>
+              </td>
+              <td>
+                <select id="basicIngredsStock-transaction_type" class="" >
+                  <option value="1" >Added to Stock</option>
+                  <option value="-1" >Used from Stock</option>
+                </select>
+              </td>
+              <td>
+                <a id="addNew" class="btn btn-small btn-primary"  onclick="addNewBasicIngredsStock();">Add New</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+
+  </div>
+</div>
+
+<script>
+  function addNewBasicIngredsStock(){
+    var data = {
+      title: $("input#basicIngredsStock-title").val(),
+      substance: $("input#basicIngredsStock-substance").val(),
+      date: $("input#basicIngredsStock-date").val(),
+      quantity: $("input#basicIngredsStock-quantity").val(),
+      transaction_type: $("select#basicIngredsStock-transaction_type").val()
+    };
+    $.ajax({
+      type: "POST",
+      url: '/stock',
+      data: JSON.stringify(data),
+      contentType:"application/json; charset=utf-8",
+      dataType:"json",
+      success: function() {
+        location.reload();
+      }
+    });
+  }
+
+  function deleteBasicIngredsStock(id){
+    $.ajax({
+      type: "DELETE",
+      url: '/stock/' + id,
+      success: function() {
+        location.reload();
+      }
+    });
+  }
+
+</script>

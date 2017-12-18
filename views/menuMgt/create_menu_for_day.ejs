@@ -1,0 +1,218 @@
+
+<div class="container-fluid">
+  <div class="row">
+
+    <main role="main" class="col-sm-12 ml-sm-auto col-md-12 pt-3">
+      <h1>
+        Menu Items / Dishes
+        <a class="float-right" href="/menuMgt/all_menu_for_days" >Go back</a>
+      </h1>
+      <hr/>
+      <h5>
+        <span>Select Date: <input class="dateTimePickerField" id="menu-date" data-provide="datepicker" value="<%= sails.moment().format('DD MMM YYYY') %>"/></span>
+        <a class="float-right btn btn-lg btn-success" onclick="releaseMenuForTheDay();">Release Menu</a>
+      </h5>
+
+      <div class="table-responsive">
+        <table id="menu-items-table" class="table table-striped">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Menu Item</th>
+              <th>Quantity</th>
+              <th>Associated Item</th>
+              <th>Quantity</th>
+              <th><a id="addNewItem" class="btn btn-small btn-warning"  onclick="addNewMenuItem();">Add More Items</a></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="menu-items-row">
+              <td><input id="menu-id" class="d-none"/></td>
+              <td>
+                <select id="menu-substance" class="" >
+                  <% allMenuItems.forEach(function(eachMenuItem){ %>
+                    <option value="<%= eachMenuItem.id %>" ><%= eachMenuItem.title %> (<%= eachMenuItem.measurement.title %>)</option>
+                  <% }) %>
+                </select>
+              </td>
+              <td><input id="menu-quantity" /></td>
+              <td></td>
+              <td></td>
+              <td>
+                <a id="confirmNewItem" class="btn btn-small btn-primary"  onclick="confirmNewMenuItem(this);">Confirm Item</a>
+                <a id="removeNewItem" class="btn btn-small btn-danger d-none"  onclick="removeNewMenuItem(this);">Remove Item</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+
+  </div>
+</div>
+
+<div id="menu-item-template" class="d-none">
+  <table class="table table-striped">
+    <thead>
+      <tr class="menu-items-row">
+        <td><input id="menu-id" class="d-none"/></td>
+        <td>
+          <select id="menu-substance" class="" >
+            <% allMenuItems.forEach(function(eachMenuItem){ %>
+              <option value="<%= eachMenuItem.id %>" ><%= eachMenuItem.title %> (<%= eachMenuItem.measurement.title %>)</option>
+            <% }) %>
+          </select>
+        </td>
+        <td><input id="menu-quantity" /></td>
+        <td></td>
+        <td></td>
+        <td>
+          <a id="confirmNewItem" class="btn btn-small btn-primary"  onclick="confirmNewMenuItem(this);">Confirm Item</a>
+          <a id="removeNewItem" class="btn btn-small btn-danger d-none"  onclick="removeNewMenuItem(this);">Remove Item</a>
+        </td>
+      </tr>
+    </thead>
+  </table>
+</div>
+<div id="assoc-item-template" class="d-none">
+  <table class="table table-striped">
+    <thead>
+      <tr class="menu-items-row">
+        <td><input class="assoc-id d-none"/></td>
+        <td></td>
+        <td></td>
+        <td>
+          <input class="assoc-id-select" type="checkbox" checked="checked" onchange="selectAsscoItem(this);"/>
+          <div class="assoc-item-title"></div>
+        </td>
+        <td><input class="assoc-quantity" /></td>
+        <td>
+        </td>
+      </tr>
+    </thead>
+  </table>
+</div>
+
+<script>
+
+  var selectedMenuItemsMap = {};
+
+  function addNewMenuItem() {
+    $("div#menu-item-template tr").clone().insertAfter("table#menu-items-table tr:last");
+  }
+
+  function confirmNewMenuItem(button){
+    var selectedRow = $(button).closest('tr.menu-items-row');
+    var inputQuantity = $(selectedRow).find('input#menu-quantity').val();
+
+    if(inputQuantity === null || inputQuantity === undefined || inputQuantity === 0 || inputQuantity === ""){
+      console.log("Quantity cannot be null");
+      return;
+    }
+
+    var selectedMenuItem = $(selectedRow).find('select#menu-substance').val();
+    $(selectedRow).attr('menu-item-id', selectedMenuItem);
+
+    if(selectedMenuItemsMap[selectedMenuItem]){
+      console.log('Menu item is already selected!');
+      return;
+    }
+
+    $(selectedRow).find('input#menu-quantity').prop('readonly', true);
+
+    selectedMenuItemsMap[selectedMenuItem] = {};
+    selectedMenuItemsMap[selectedMenuItem].quantity = inputQuantity;
+
+    $(button).addClass('d-none');
+    $(selectedRow).find('a#removeNewItem').removeClass('d-none');
+
+    $.ajax({
+      type: "POST",
+      url: '/menuMgt/getAssociatedMenuItemsForMainItem?selectedMenuItem=' + selectedMenuItem,
+      contentType:"application/json; charset=utf-8",
+      dataType:"json",
+      success: function(result) {
+        appendAssocItems(result, selectedMenuItem, inputQuantity);
+      }
+    });
+  }
+
+  function appendAssocItems(result, selectedMenuItem, selectedQuantity) {
+    if(result === null || result === undefined || result.length <= 0){
+      return;
+    }
+
+    var assocItems = result['associatedItems'];
+    if(assocItems === null || assocItems === undefined || assocItems.length <= 0){
+      return;
+    }
+
+    selectedMenuItemsMap[selectedMenuItem].assocItems = {};
+
+    for(var eachAssocItemId in assocItems){
+      var assocQuantity = (assocItems[eachAssocItemId].proportion * selectedQuantity);
+      var assocId = assocItems[eachAssocItemId].composition.id;
+      var clonedAssocItem = $("div#assoc-item-template tr").clone();
+      $(clonedAssocItem).attr('menu-item-id', selectedMenuItem);
+      $(clonedAssocItem).attr('assoc-item-id', assocId);
+      $(clonedAssocItem).find('div.assoc-item-title').html(assocItems[eachAssocItemId].composition.title);
+      $(clonedAssocItem).find('input.assoc-id').prop('value', selectedMenuItem);
+      $(clonedAssocItem).find('input.assoc-quantity').prop('value', assocQuantity);
+      $(clonedAssocItem).find('input.assoc-quantity').prop('readonly', true);
+      $(clonedAssocItem).insertAfter("table#menu-items-table tr:last");
+
+      selectedMenuItemsMap[selectedMenuItem].assocItems[assocId] = assocQuantity;
+    }
+  }
+
+  function removeNewMenuItem(button){
+    var selectedRow = $(button).closest('tr.menu-items-row');
+    var selectedMenuItem = $(selectedRow).find('select#menu-substance').val();
+
+    delete selectedMenuItemsMap[selectedMenuItem];
+    $('tr.menu-items-row[menu-item-id=' +selectedMenuItem + ']').remove();
+
+  }
+
+  function selectAsscoItem(button) {
+    var selectedRow = $(button).closest('tr.menu-items-row');
+    var selectedMenuItem = $(selectedRow).attr('menu-item-id');
+    var assocItemId = $(selectedRow).attr('assoc-item-id');
+
+    if($(button).prop('checked')){
+      var assocQuantity = $(selectedRow).find('input.assoc-quantity').prop('value');
+      selectedMenuItemsMap[selectedMenuItem].assocItems[assocItemId] = assocQuantity;
+    } else {
+      delete selectedMenuItemsMap[selectedMenuItem].assocItems[assocItemId];
+    }
+  }
+
+  function releaseMenuForTheDay() {
+    var menuDate = $('input#menu-date').val();
+    if(menuDate === null || menuDate === undefined || menuDate === 0 || menuDate === ""){
+      console.log("Menu Date cannot be null");
+      return;
+    }
+
+    if(jQuery.isEmptyObject(selectedMenuItemsMap)){
+      console.log("Menu cannot be empty. Please select at least one menu item.");
+      return;
+    }
+
+    var data = {};
+    data.menuDate = menuDate;
+    data.selectedMenuItemsMap = selectedMenuItemsMap;
+
+    console.log(JSON.stringify(data));
+
+    $.ajax({
+      type: "PUT",
+      url: '/menuMgt/createMenuForTheDay',
+      data: JSON.stringify(data),
+      success: function() {
+        window.location = "/menuMgt/all_menu_for_days";
+      }
+    });
+  }
+
+</script>

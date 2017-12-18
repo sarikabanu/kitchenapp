@@ -2,7 +2,7 @@
 -- Author:        310191460
 -- Caption:       New Model
 -- Project:       Name of the project
--- Changed:       2017-12-12 23:54
+-- Changed:       2017-12-17 15:26
 -- Created:       2017-12-08 00:15
 PRAGMA foreign_keys = OFF;
 
@@ -47,6 +47,7 @@ CREATE TABLE "kitchen_schema"."substance"(
   "type" INTEGER NOT NULL,
   "measurement" INTEGER NOT NULL,
   "category" INTEGER,
+  "recipe_available" BOOLEAN DEFAULT 0,
   CONSTRAINT "substance_type_fk"
     FOREIGN KEY("type")
     REFERENCES "type"("id"),
@@ -67,12 +68,18 @@ CREATE TABLE "kitchen_schema"."menu"(
   "updated" DATETIME DEFAULT CURRENT_TIMESTAMP,
   "date" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   "substance" INTEGER NOT NULL,
-  "quantity" INTEGER NOT NULL,
+  "quantity" FLOAT NOT NULL,
+  "count" INTEGER DEFAULT 0,
+  "parent" INTEGER,
   CONSTRAINT "menu_substance_fk"
     FOREIGN KEY("substance")
-    REFERENCES "substance"("id")
+    REFERENCES "substance"("id"),
+  CONSTRAINT "menu_menu_fk"
+    FOREIGN KEY("parent")
+    REFERENCES "menu"("id")
 );
 CREATE INDEX "kitchen_schema"."menu.menu_substance_fk_idx" ON "menu" ("substance");
+CREATE INDEX "kitchen_schema"."menu.menu_menu_fk_idx" ON "menu" ("parent");
 CREATE TABLE "kitchen_schema"."recipe"(
   "id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
   "title" VARCHAR(45) NOT NULL,
@@ -96,8 +103,8 @@ CREATE TABLE "kitchen_schema"."job"(
   "date" DATETIME DEFAULT CURRENT_TIMESTAMP,
   "recipe" INTEGER NOT NULL,
   "status" INTEGER NOT NULL,
-  "quantity" INTEGER,
-  "completed" INTEGER,
+  "quantity" FLOAT,
+  "completed" FLOAT,
   CONSTRAINT "job_recipe_fk"
     FOREIGN KEY("recipe")
     REFERENCES "recipe"("id"),
@@ -107,13 +114,25 @@ CREATE TABLE "kitchen_schema"."job"(
 );
 CREATE INDEX "kitchen_schema"."job.job_recipe_fk_idx" ON "job" ("recipe");
 CREATE INDEX "kitchen_schema"."job.job_status_fk_idx" ON "job" ("status");
+CREATE TABLE "kitchen_schema"."recipe_sub_tasks"(
+  "id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+  "title" VARCHAR(45) NOT NULL,
+  "description" VARCHAR(45),
+  "updated" DATETIME,
+  "main_recipe_task" INTEGER NOT NULL,
+  "sequence" INTEGER NOT NULL,
+  CONSTRAINT "sub_task_recipe_fk"
+    FOREIGN KEY("main_recipe_task")
+    REFERENCES "recipe"("id")
+);
+CREATE INDEX "kitchen_schema"."recipe_sub_tasks.sub_task_recipe_fk_idx" ON "recipe_sub_tasks" ("main_recipe_task");
 CREATE TABLE "kitchen_schema"."net_stock"(
   "id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
   "title" VARCHAR(45) NOT NULL,
   "description" VARCHAR(100),
   "updated" DATETIME DEFAULT CURRENT_TIMESTAMP,
   "substance" INTEGER NOT NULL,
-  "net_quantity" DOUBLE NOT NULL,
+  "net_quantity" FLOAT NOT NULL,
   CONSTRAINT "substance_UNIQUE"
     UNIQUE("substance"),
   CONSTRAINT "net_stock_substance_fk"
@@ -170,7 +189,7 @@ CREATE TABLE "kitchen_schema"."stock"(
   "description" VARCHAR(100),
   "date" DATETIME DEFAULT CURRENT_TIMESTAMP,
   "updated" DATETIME DEFAULT CURRENT_TIMESTAMP,
-  "quantity" INTEGER NOT NULL,
+  "quantity" FLOAT NOT NULL,
   "transaction_type" INTEGER NOT NULL DEFAULT 0,
   "substance" INTEGER NOT NULL,
   CONSTRAINT "stock_substance_fk"
@@ -183,9 +202,9 @@ CREATE TABLE "kitchen_schema"."requirement"(
   "substance" INTEGER NOT NULL,
   "date" DATETIME DEFAULT CURRENT_TIMESTAMP,
   "updated" DATETIME DEFAULT CURRENT_TIMESTAMP,
-  "quantity" INTEGER NOT NULL,
+  "quantity" FLOAT NOT NULL,
   "status" INTEGER NOT NULL,
-  "completed" INTEGER,
+  "completed" FLOAT,
   CONSTRAINT "requirement_substance_fk"
     FOREIGN KEY("substance")
     REFERENCES "substance"("id"),

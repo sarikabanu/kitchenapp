@@ -325,6 +325,22 @@ module.exports = {
 
 
   /**
+   * `AdminController.recipe_sub_tasks()`
+   */
+  recipe_sub_tasks: function (req, res) {
+    var recipes = {};
+
+    Recipe.find().exec(function (err, result){
+      recipes = result;
+    });
+
+    Recipe_sub_tasks.find().populate('main_recipe_task').exec(function (err, result){
+      return res.view('admin/recipe_sub_tasks', {allRecipeSubTasks: result, recipes: recipes} );
+    });
+  },
+
+
+  /**
    * `AdminController.step()`
    */
   step: function (req, res) {
@@ -356,7 +372,7 @@ module.exports = {
       });
     });
 
-    Substance.find({type: 3}).exec(function (err, result){
+    Substance.find({type: [3, 4]}).exec(function (err, result){
       menuItems = result;
     });
 

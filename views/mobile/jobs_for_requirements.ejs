@@ -29,6 +29,41 @@
             <li class="nav-item">
               <span class="">Completed Quantity: <b><%= job.completed %></b> </span><span><%= measurementsMap[job.recipe.substance.measurement] %></span>
             </li>
+            <li class="nav-item">
+              <span class="">Job Status: <b><%= job.status.title %></b> </span>
+            </li>
+            <% if(job.status.id == 1){ %>
+                <li class="nav-item job-action-button">
+                  <a id="start-<%= job.id %>" class="btn btn-small btn-primary"  onclick="getRequiredIngredientsForJob(<%= job.id %>);">Start Job</a>
+                </li>
+                <li class="nav-item d-none required-ingredients-confirm">
+                  <span>Please confirm if you have received following required ingredients and their quantity.</span>
+                  <div id="required-ingredients"></div>
+                  <a id="confirm-required-ingredients-<%= job.id %>" class="btn btn-small btn-primary"  onclick="confirmStartJob(<%= job.id %>);">Confirm</a>
+                </li>
+            <% } if(job.status.id == 2) { %>
+                <li class="nav-item job-action-button">
+                  <a id="pause-<%= job.id %>" class="btn btn-small btn-secondary"  onclick="pauseJob(<%= job.id %>);">Pause Job</a>
+                </li>
+                <li class="nav-item d-none pause-quantity-confirm">
+                  <span>Please enter the quantity completed.</span>
+                  <input id="job-pause-quantity-<%= job.id %>" value="<%= job.quantity %>"/><span><%= measurementsMap[job.recipe.substance.measurement] %></span>
+                  <a id="confirm-pause-<%= job.id %>" class="btn btn-small btn-primary"  onclick="confirmPauseJob(<%= job.id %>);">Confirm changes</a>
+                </li>
+            <% } if(job.status.id == 4) { %>
+                <li class="nav-item job-action-button">
+                  <a id="resume-<%= job.id %>" class="btn btn-small btn-warning"  onclick="resumeJob(<%= job.id %>);">Resume Job</a>
+                </li>
+            <% } else if(job.status.id == 2 || job.status.id == 4) { %>
+                <li class="nav-item job-action-button">
+                  <a id="end-<%= job.id %>" class="btn btn-small btn-success"  onclick="endJob(<%= job.id %>);">End Job</a>
+                </li>
+                <li class="nav-item d-none end-quantity-confirm">
+                  <span>Please enter the quantity completed.</span>
+                  <input id="job-end-quantity-<%= job.id %>" value="<%= job.quantity %>"/><span><%= measurementsMap[job.recipe.substance.measurement] %></span>
+                  <a id="confirm-end-<%= job.id %>" class="btn btn-small btn-primary"  onclick="confirmEndJob(<%= job.id %>);">Confirm changes</a>
+                </li>
+            <% } %>
           </ul>
         <% }) %>
 
@@ -36,3 +71,70 @@
 
   </div>
 </div>
+
+
+<script>
+
+  function getRequiredIngredientsForJob(id){
+    $('.job-action-button').addClass('d-none');
+    $('.required-ingredients-confirm').removeClass('d-none');
+        $.ajax({
+          type: "POST",
+          url: '/mobile/getRequiredIngredientsForJob?jobId=' + id,
+          success: function(res) {
+            $('div#required-ingredients').text(JSON.stringify(res));
+          }
+        });
+  }
+
+  function confirmStartJob(id){
+        $.ajax({
+          type: "POST",
+          url: '/mobile/startJob?jobId=' + id,
+          success: function() {
+            location.reload();
+          }
+        });
+  }
+
+  function pauseJob(id){
+      $('.job-action-button').addClass('d-none');
+      $('.pause-quantity-confirm').removeClass('d-none');
+  }
+
+  function confirmPauseJob(id){
+        $.ajax({
+          type: "POST",
+          url: '/mobile/pauseJob?jobId=' + id + '&completedQuantity=' + $('input#job-pause-quantity-' + id).val(),
+          success: function() {
+            location.reload();
+          }
+        });
+  }
+
+  function resumeJob(id){
+        $.ajax({
+          type: "POST",
+          url: '/mobile/resumeJob?jobId=' + id,
+          success: function() {
+            location.reload();
+          }
+        });
+  }
+
+  function endJob(id){
+      $('.job-action-button').addClass('d-none');
+      $('.end-quantity-confirm').removeClass('d-none');
+  }
+
+  function confirmEndJob(id){
+        $.ajax({
+          type: "POST",
+          url: '/mobile/endJob?jobId=' + id + '&completedQuantity=' + $('input#job-end-quantity-' + id).val(),
+          success: function() {
+            location.reload();
+          }
+        });
+  }
+
+</script>

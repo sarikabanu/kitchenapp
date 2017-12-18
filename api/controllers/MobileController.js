@@ -25,8 +25,8 @@ module.exports = {
 
           allJobsForStations.forEach(function(job) {
             if (stationsWithStatus[job.recipe.station]) {
-              if (job.status < stationsWithStatus[job.recipe.station][status]) {
-                stationsWithStatus[job.recipe.station][status] = job.status;
+              if (job.status < stationsWithStatus[job.recipe.station].status) {
+                stationsWithStatus[job.recipe.station].status = job.status;
 
               }
             } else {
@@ -227,8 +227,8 @@ module.exports = {
 
           allJobsForStations.forEach(function(job) {
             if (stationsWithStatus[job.recipe.station]) {
-              if (job.status < stationsWithStatus[job.recipe.station][status]) {
-                stationsWithStatus[job.recipe.station][status] = job.status;
+              if (job.status < stationsWithStatus[job.recipe.station].status) {
+                stationsWithStatus[job.recipe.station].status = job.status;
 
               }
             } else {
@@ -336,12 +336,106 @@ module.exports = {
 
 
   /**
+   * `MobileController.getSubTasksForJob()`
+   */
+  getSubTasksForJob: function(req, res) {
+    var jobId = req.param('jobId');
+
+    Job.find({
+      id: jobId
+    }).exec(function(err, selectedJob) {
+
+      Recipe_sub_tasks.find({
+        main_recipe_task: selectedJob[0].recipe
+      }).exec(function(err, allSubTasksForJob) {
+        return res.json({
+          allSubTasksForJob: allSubTasksForJob
+        });
+      });
+    });
+  },
+
+
+  /**
+   * `MobileController.getRequiredIngredientsForJob()`
+   */
+  getRequiredIngredientsForJob: function(req, res) {
+    var jobId = req.param('jobId');
+
+    Job.find({
+      id: jobId
+    }).populate('recipe').exec(function(err, selectedJob) {
+
+      Composition.find({
+        substance: selectedJob[0].recipe.substance,
+      }).populate('composition').exec(function(err, requiredCompositions) {
+
+        var requiremedIngredients = {};
+        for (var index = 0 ; index < requiredCompositions.length; index++) {
+          requiremedIngredients[index] = {};
+          requiremedIngredients[index].requiredSubstance = requiredCompositions[index].composition.title;
+          requiremedIngredients[index].requiredQuantity = (requiredCompositions[index].proportion * selectedJob[0].quantity);
+        }
+        return res.json({
+          requiremedIngredients: requiremedIngredients
+        });
+      });
+    });
+
+  },
+
+
+  /**
    * `MobileController.startJob()`
    */
   startJob: function(req, res) {
-    return res.json({
-      todo: 'startJob() is not implemented yet!'
+    var jobId = req.param('jobId');
+
+    Job.find({
+      id: jobId
+    }).populate('recipe').exec(function(err, selectedJob) {
+
+      Composition.find({
+        substance: selectedJob[0].recipe.substance,
+      }).populate('composition').exec(function(err, requiredCompositions) {
+
+        var stocksToCreate = [];
+        for (var index = 0 ; index < requiredCompositions.length; index++) {
+          var requiredQuantity = requiredCompositions[index].proportion * selectedJob[0].quantity;
+          stocksToCreate.push({
+            title: 'Stock received for starting Job ' + selectedJob[0].id,
+            description: 'Stock received starting Job : ' + selectedJob[0].id + ' - ' + selectedJob[0].recipe.title,
+            quantity: requiredQuantity,
+            substance: requiredCompositions[index].composition.id,
+            transaction_type: -1
+          });
+        }
+
+        Stock.create(stocksToCreate).exec(function(err, newStockItem) {
+          if(err) return res.serverError(err);
+
+          Job.update({
+            id: jobId
+          }, {
+            status: 2 //In process.
+          }).exec(function afterwards(err, updatedJob) {
+
+            if (err) {
+              // handle error here- e.g. `res.serverError(err);`
+              return res.serverError(err);
+            }
+
+            return res.json({
+              updatedJob: updatedJob
+            });
+          });
+        });
+
+      });
     });
+
+
+
   },
 
 
@@ -349,8 +443,48 @@ module.exports = {
    * `MobileController.pauseJob()`
    */
   pauseJob: function(req, res) {
-    return res.json({
-      todo: 'pauseJob() is not implemented yet!'
+    var jobId = req.param('jobId');
+    var completedQuantity = req.param('completedQuantity');
+
+    Job.update({
+      id: jobId
+    }, {
+      status: 4, //Paused
+      completed: completedQuantity
+    }).exec(function afterwards(err, updatedJob) {
+
+      if (err) {
+        // handle error here- e.g. `res.serverError(err);`
+        return res.serverError(err);
+      }
+
+      return res.json({
+        updatedJob: updatedJob
+      });
+    });
+  },
+
+
+  /**
+   * `MobileController.resumeJob()`
+   */
+  resumeJob: function(req, res) {
+    var jobId = req.param('jobId');
+
+    Job.update({
+      id: jobId
+    }, {
+      status: 2 //In process.
+    }).exec(function afterwards(err, updatedJob) {
+
+      if (err) {
+        // handle error here- e.g. `res.serverError(err);`
+        return res.serverError(err);
+      }
+
+      return res.json({
+        updatedJob: updatedJob
+      });
     });
   },
 
@@ -359,8 +493,40 @@ module.exports = {
    * `MobileController.endJob()`
    */
   endJob: function(req, res) {
-    return res.json({
-      todo: 'endJob() is not implemented yet!'
+    var jobId = req.param('jobId');
+    var completedQuantity = req.param('completedQuantity');
+
+    Job.update({
+      id: jobId
+    }, {
+      status: 3, //In process.
+      completed: completedQuantity
+    }).exec(function afterwards(err, updatedJob) {
+
+      if (err) {
+        // handle error here- e.g. `res.serverError(err);`
+        return res.serverError(err);
+      }
+
+      Job.find({
+        id: jobId
+      }).populate('recipe').exec(function(err, selectedJob) {
+
+        Stock.create({
+          title: 'Stock created after completing Job ' + selectedJob[0].id,
+          description: 'Stock created after completing Job : ' + selectedJob[0].id + ' - ' + selectedJob[0].recipe.title,
+          quantity: completedQuantity,
+          substance: selectedJob[0].recipe.substance,
+          transaction_type: 1
+        }).exec(function(err, newStock) {
+          if(err) return res.serverError(err);
+
+          return res.json({
+            updatedJob: updatedJob
+          });
+        });
+      });
+
     });
   }
 };

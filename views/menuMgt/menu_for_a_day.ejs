@@ -1,0 +1,75 @@
+
+<div class="container-fluid">
+  <div class="row">
+
+    <main role="main" class="col-sm-12 ml-sm-auto col-md-12 pt-3">
+      <h1>
+        Menu of the Day -
+        <span><%= sails.moment(selectedDate).format('DD MMM YYYY') %></span>
+        <a class="float-right" href="/menuMgt/all_menu_for_days" >Go back</a>
+      </h1>
+
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Menu Item</th>
+              <th>Quantity</th>
+              <th>Associated Item</th>
+              <th>Quantity</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% allMenus.forEach(function(menu, index){ %>
+              <tr id="menu-<%= menu.id %>">
+                <td>
+                  <%= index+1 %>
+                </td>
+                <td>
+                  <% if(menu.count == 1){ %>
+                    <span><%= menu.substance.title %></span>
+                  <% } %>
+                </td>
+                <td>
+                  <% if(menu.count == 1){ %>
+                    <span><%= menu.quantity %></span>
+                    <span><%= measurementsMap[menu.substance.measurement] %></span>
+                  <% } %>
+                </td>
+                <td>
+                  <% if(menu.count == 0){ %>
+                    <span><%= menu.substance.title %></span>
+                  <% } %>
+                </td>
+                <td>
+                  <% if(menu.count == 0){ %>
+                    <span><%= menu.quantity %></span>
+                    <span><%= measurementsMap[menu.substance.measurement] %></span>
+                  <% } %>
+                </td>
+                <td>
+                </td>
+              </tr>
+            <% }) %>
+            <tr class="">
+              <td></td>
+              <td>
+                <a class="btn btn-small btn-warning" href="/menuMgt/all_menu_items" >View all Menu Items available</a>
+              </td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+
+  </div>
+</div>
+
+<script>
+
+</script>

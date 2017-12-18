@@ -32,10 +32,10 @@
                   <input id="category-description-<%= category.id %>" class="d-none" value="<%= category.description %>"/>
                 </td>
                 <td>
-                  <a id="edit-<%= category.id %>" class="btn btn-small btn-warning" href="#" onclick="editCategory(<%= category.id %>);">Edit</a>
-                  <a id="save-<%= category.id %>" class="btn btn-small btn-secondary d-none" href="#" onclick="saveCategory(<%= category.id %>);">Save</a>
-                  <a id="cancel-<%= category.id %>" class="btn btn-small btn-light d-none" href="#" onclick="cancelEditCategory(<%= category.id %>);">Cancel</a>
-                  <a id="delete-<%= category.id %>" class="btn btn-small btn-danger" href="#" onclick="deleteCategory(<%= category.id %>);">Delete</a>
+                  <a id="edit-<%= category.id %>" class="btn btn-small btn-warning"  onclick="editCategory(<%= category.id %>);">Edit</a>
+                  <a id="save-<%= category.id %>" class="btn btn-small btn-secondary d-none"  onclick="saveCategory(<%= category.id %>);">Save</a>
+                  <a id="cancel-<%= category.id %>" class="btn btn-small btn-light d-none"  onclick="cancelEditCategory(<%= category.id %>);">Cancel</a>
+                  <a id="delete-<%= category.id %>" class="btn btn-small btn-danger"  onclick="deleteCategory(<%= category.id %>);">Delete</a>
                 </td>
               </tr>
             <% }) %>
@@ -44,7 +44,7 @@
               <td><input id="category-title" /></td>
               <td><input id="category-description" /></td>
               <td>
-                <a id="addNew" class="btn btn-small btn-primary" href="#" onclick="addNewCategory();">Add New</a>
+                <a id="addNew" class="btn btn-small btn-primary"  onclick="addNewCategory();">Add New</a>
               </td>
             </tr>
           </tbody>

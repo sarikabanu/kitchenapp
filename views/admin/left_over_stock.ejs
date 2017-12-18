@@ -39,8 +39,8 @@
                   </select>
                 </td>
                 <td>
-                  <span><%= intmdItemsStock.date %></span>
-                  <input class="dateTimePickerField d-none" id="intmdItemsStock-date-<%= intmdItemsStock.id %>" class="d-none" value="<%= intmdItemsStock.date %>" data-provide="datepicker"/>
+                  <span><%= sails.moment(intmdItemsStock.date).format('DD MMM YYYY') %></span>
+                  <input class="dateTimePickerField d-none" id="intmdItemsStock-date-<%= intmdItemsStock.id %>" class="d-none" value="<%= sails.moment(intmdItemsStock.date).format('DD MMM YYYY') %>" data-provide="datepicker"/>
                 </td>
                 <td>
                   <span><%= intmdItemsStock.quantity %></span>
@@ -55,10 +55,10 @@
                   </select>
                 </td>
                 <td>
-                  <a id="edit-<%= intmdItemsStock.id %>" class="btn btn-small btn-warning" href="#" onclick="editIntmdItemsStock(<%= intmdItemsStock.id %>);">Edit</a>
-                  <a id="save-<%= intmdItemsStock.id %>" class="btn btn-small btn-secondary d-none" href="#" onclick="saveIntmdItemsStock(<%= intmdItemsStock.id %>);">Save</a>
-                  <a id="cancel-<%= intmdItemsStock.id %>" class="btn btn-small btn-light d-none" href="#" onclick="cancelEditIntmdItemsStock(<%= intmdItemsStock.id %>);">Cancel</a>
-                  <a id="delete-<%= intmdItemsStock.id %>" class="btn btn-small btn-danger" href="#" onclick="deleteIntmdItemsStock(<%= intmdItemsStock.id %>);">Delete</a>
+                  <a id="edit-<%= intmdItemsStock.id %>" class="btn btn-small btn-warning d-none"  onclick="editIntmdItemsStock(<%= intmdItemsStock.id %>);">Edit</a>
+                  <a id="save-<%= intmdItemsStock.id %>" class="btn btn-small btn-secondary d-none"  onclick="saveIntmdItemsStock(<%= intmdItemsStock.id %>);">Save</a>
+                  <a id="cancel-<%= intmdItemsStock.id %>" class="btn btn-small btn-light d-none"  onclick="cancelEditIntmdItemsStock(<%= intmdItemsStock.id %>);">Cancel</a>
+                  <a id="delete-<%= intmdItemsStock.id %>" class="btn btn-small btn-danger"  onclick="deleteIntmdItemsStock(<%= intmdItemsStock.id %>);">Delete</a>
                 </td>
               </tr>
             <% }) %>
@@ -81,7 +81,7 @@
                 </select>
               </td>
               <td>
-                <a id="addNew" class="btn btn-small btn-primary" href="#" onclick="addNewIntmdItemsStock();">Add New</a>
+                <a id="addNew" class="btn btn-small btn-primary"  onclick="addNewIntmdItemsStock();">Add New</a>
               </td>
             </tr>
           </tbody>

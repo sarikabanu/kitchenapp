@@ -54,6 +54,37 @@ module.exports = {
       size: 11,
       defaultsTo: null,
       model: 'category'
+    },
+    recipe_available: {
+      type: 'boolean',
+      required: false
     }
-  }
+  },
+  afterCreate: function(insertedRecord, callback) {
+    updateNetStock(insertedRecord, callback);
+  },
 };
+
+function updateNetStock(substanceInserted, callback) {
+
+  // Update the net_stock based on the transaction.
+  Net_stock.find({
+    substance: substanceInserted.id
+  }).exec(function(err, selectedNetStock) {
+    if (err) return callback(err);
+
+    if (selectedNetStock === null || selectedNetStock.length <= 0) {
+      Net_stock.create({
+        title: 'Net stock balance for substance - ' + substanceInserted.id,
+        description: 'Net stock balance for substance - ' + substanceInserted.id,
+        substance: substanceInserted.id,
+        net_quantity: 0
+      }).exec(function(err, createdNetStock) {
+        if (err) return callback(err);
+        return callback();
+      });
+
+    }
+
+  });
+}

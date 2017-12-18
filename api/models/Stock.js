@@ -39,7 +39,7 @@ module.exports = {
       // defaultsTo: 'CURRENT_TIMESTAMP'
     },
     quantity: {
-      type: 'integer',
+      type: 'float',
       required: true
     },
     transaction_type: {
@@ -56,5 +56,126 @@ module.exports = {
       size: 11,
       model: 'substance'
     }
-  }
+  },
+  // Lifecycle Callbacks
+  beforeCreate: function(values, callback) {
+    return checkIfStockTransactionIsAllowed(values, callback);
+  },
+  afterCreate: function(insertedRecord, callback) {
+    updateNetStock(insertedRecord, callback);
+  },
+  beforeUpdate: function(values, callback) {
+    callback('Stock transaction records cannot be modified!');
+  },
 };
+
+
+function checkIfStockTransactionIsAllowed(stockTransaction, callback) {
+
+  // Check if there is enough balance, before reducing the stock
+  if (stockTransaction.transaction_type == -1) {
+    Net_stock.find({
+      substance: stockTransaction.substance
+    }).exec(function(err, selectedNetStock) {
+      if (err) return callback(err);
+
+      if (selectedNetStock.length <= 0 || selectedNetStock[0].net_quantity < stockTransaction.quantity) {
+        callback('Sufficient balance is not available in stock for this material');
+      } else {
+        callback();
+      }
+
+    });
+  } else {
+    callback();
+  }
+}
+
+function updateNetStock(stockTransaction, callback) {
+
+  // Update the net_stock based on the transaction.
+  Net_stock.find({
+    substance: stockTransaction.substance
+  }).exec(function(err, selectedNetStock) {
+    if (err) return callback(err);
+
+    if (selectedNetStock === null || selectedNetStock.length <= 0) {
+      Net_stock.create({
+        title: 'Net stock balance for substance - ' + stockTransaction.substance,
+        description: 'Net stock balance for substance - ' + stockTransaction.substance,
+        substance: stockTransaction.substance,
+        net_quantity: stockTransaction.quantity
+      }).exec(function(err, createdNetStock) {
+        if (err) return callback(err);
+        updateRequirements(stockTransaction, callback);
+      });
+
+    } else {
+
+      var updatedBalance;
+      if (stockTransaction.transaction_type == -1) {
+        updatedBalance = selectedNetStock[0].net_quantity - stockTransaction.quantity;
+      } else {
+        updatedBalance = selectedNetStock[0].net_quantity + stockTransaction.quantity;
+      }
+
+      if (updatedBalance < 0) {
+        return callback('Net balance cannot go negative!');
+      }
+
+      Net_stock.update({
+        substance: stockTransaction.substance
+      }, {
+        net_quantity: updatedBalance
+      }).exec(function(err, updatedNetStock) {
+        if (err) return callback(err);
+        updateRequirements(stockTransaction, callback);
+      });
+    }
+
+  });
+}
+
+function updateRequirements(stockTransaction, callback) {
+  var dateSelected = new Date(stockTransaction.date);
+
+  Requirement.find({
+    status: 1,
+    date: dateSelected,
+    substance: stockTransaction.substance
+  }).exec(function(err, allRequirements) {
+
+    if(allRequirements === null || allRequirements === undefined || allRequirements.length < 0){
+      return callback();
+    }
+
+    var totalQuantity = stockTransaction.quantity;
+    allRequirements.forEach(function(eachRequirement) {
+
+      if(totalQuantity === 0){
+        return callback();
+      }
+
+      if(eachRequirement.quantity == totalQuantity){
+        totalQuantity = 0;
+        eachRequirement.status = 3;
+      } else if(eachRequirement.quantity < totalQuantity) {
+        totalQuantity -= eachRequirement.quantity;
+        eachRequirement.status = 3;
+      } else if(eachRequirement.quantity > totalQuantity) {
+        eachRequirement.quantity -= totalQuantity;
+      }
+
+      Requirement.update({
+        id: eachRequirement.id
+      },{
+        status: eachRequirement.status,
+        completed: eachRequirement.quantity
+      }).exec();
+
+    });
+
+    return callback();
+  });
+
+}

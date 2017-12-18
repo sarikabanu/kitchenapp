@@ -61,6 +61,7 @@ CREATE TABLE IF NOT EXISTS `kitchen_schema`.`substance` (
   `type` INT NOT NULL,
   `measurement` INT NOT NULL,
   `category` INT NULL,
+  `recipe_available` TINYINT(1) NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   INDEX `substance_type_idx` (`type` ASC),
   INDEX `substance_measurement_idx` (`measurement` ASC),
@@ -92,7 +93,7 @@ CREATE TABLE IF NOT EXISTS `kitchen_schema`.`stock` (
   `description` VARCHAR(100) NULL,
   `date` DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
   `updated` DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
-  `quantity` INT NOT NULL,
+  `quantity` FLOAT NOT NULL,
   `transaction_type` INT NOT NULL DEFAULT 0,
   `substance` INT NOT NULL,
   PRIMARY KEY (`id`),
@@ -115,7 +116,7 @@ CREATE TABLE IF NOT EXISTS `kitchen_schema`.`composition` (
   `updated` DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
   `substance` INT NOT NULL,
   `composition` INT NOT NULL COMMENT 'composition represents the parent substance from which the composition will be derived.',
-  `proportion` DOUBLE NOT NULL,
+  `proportion` FLOAT NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `composition_substance_fk_idx` (`substance` ASC),
   INDEX `composition_composition_fk_idx` (`composition` ASC),
@@ -142,12 +143,20 @@ CREATE TABLE IF NOT EXISTS `kitchen_schema`.`menu` (
   `updated` DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
   `date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `substance` INT NOT NULL,
-  `quantity` INT NOT NULL,
+  `quantity` FLOAT NOT NULL,
+  `count` INT NULL DEFAULT 0,
+  `parent` INT NULL,
   PRIMARY KEY (`id`),
   INDEX `menu_substance_fk_idx` (`substance` ASC),
+  INDEX `menu_menu_fk_idx` (`parent` ASC),
   CONSTRAINT `menu_substance_fk`
     FOREIGN KEY (`substance`)
     REFERENCES `kitchen_schema`.`substance` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `menu_menu_fk`
+    FOREIGN KEY (`parent`)
+    REFERENCES `kitchen_schema`.`menu` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -254,7 +263,8 @@ CREATE TABLE IF NOT EXISTS `kitchen_schema`.`job` (
   `date` DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
   `recipe` INT NOT NULL,
   `status` INT NOT NULL,
-  `quantity` INT NULL,
+  `quantity` FLOAT NULL,
+  `completed` FLOAT NULL,
   PRIMARY KEY (`id`),
   INDEX `job_recipe_fk_idx` (`recipe` ASC),
   INDEX `job_status_fk_idx` (`status` ASC),
@@ -279,8 +289,9 @@ CREATE TABLE IF NOT EXISTS `kitchen_schema`.`requirement` (
   `substance` INT NOT NULL,
   `date` DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
   `updated` DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
-  `quantity` DOUBLE NOT NULL,
+  `quantity` FLOAT NOT NULL,
   `status` INT NOT NULL,
+  `completed` FLOAT NULL,
   PRIMARY KEY (`id`),
   INDEX `requirement_substance_fk_idx` (`substance` ASC),
   INDEX `requirement_status_fk_idx` (`status` ASC),
@@ -306,12 +317,32 @@ CREATE TABLE IF NOT EXISTS `kitchen_schema`.`net_stock` (
   `description` VARCHAR(100) NULL,
   `updated` DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
   `substance` INT NOT NULL,
-  `net_quantity` DOUBLE NOT NULL,
+  `net_quantity` FLOAT NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `substance_UNIQUE` (`substance` ASC),
   CONSTRAINT `net_stock_substance_fk`
     FOREIGN KEY (`substance`)
     REFERENCES `kitchen_schema`.`substance` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `kitchen_schema`.`recipe_sub_tasks`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `kitchen_schema`.`recipe_sub_tasks` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `title` VARCHAR(45) NOT NULL,
+  `description` VARCHAR(45) NULL,
+  `updated` DATETIME NULL,
+  `main_recipe_task` INT NOT NULL,
+  `sequence` INT NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `sub_task_recipe_fk_idx` (`main_recipe_task` ASC),
+  CONSTRAINT `sub_task_recipe_fk`
+    FOREIGN KEY (`main_recipe_task`)
+    REFERENCES `kitchen_schema`.`recipe` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;

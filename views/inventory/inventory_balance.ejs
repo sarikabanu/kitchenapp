@@ -1,0 +1,113 @@
+
+<div class="container-fluid">
+  <div class="row">
+
+    <main role="main" class="col-sm-12 ml-sm-auto col-md-12 pt-3">
+      <h1>Availibilty of Basic Ingredients <a class="float-right" href="/inventory/inventory_balance_with_requirements" >View Requirements</a></h1>
+
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Material</th>
+              <th>Available Balance</th>
+              <th>Last updated</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% allBasicIngredsBalance.forEach(function(basicIngredsBalance, index){ %>
+              <tr id="basicIngredsBalance-<%= basicIngredsBalance.id %>">
+                <td>
+                  <%= index+1 %>
+                </td>
+                <td>
+                  <span><%= basicIngredsBalance.substance.title %></span>
+                </td>
+                <td>
+                  <span><%= basicIngredsBalance.net_quantity %></span>
+                  <span><%= measurementsMap[basicIngredsBalance.substance.measurement] %></span>
+                </td>
+                <td>
+                  <span><%= sails.moment(basicIngredsBalance.updated).format('DD MMM YYYY') %></span>
+                </td>
+                <td>
+                  <a id="view-stock-<%= basicIngredsBalance.id %>" class="btn btn-small btn-warning"
+                    href="/inventory/all_stock_transactions?selectedBasicIngred=<%= basicIngredsBalance.substance.id %>" >
+                      View Stock Transactions
+                  </a>
+                </td>
+              </tr>
+            <% }) %>
+            <tr class="">
+              <td></td>
+              <td><a id="addNew" class="add-new-basic-ingred btn btn-small btn-primary"  onclick="newBasicIngred();">Add New Item</a></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr class="d-none new-basic-ingred-fields">
+              <td>Title: <input id="basicIngred-title" /></td>
+              <td>Description: <input id="basicIngred-description" /></td>
+              <td>Measurement:
+                <select id="basicIngred-measurement" class="">
+                  <% for (var measurementId in measurementsMap) { %>
+                    <option value="<%= measurementId %>" ><%= measurementsMap[measurementId] %></option>
+                  <% } %>
+                </select>
+              </td>
+              <td>Category: 
+                <select id="basicIngred-category" class="" >
+                  <% categories.forEach(function(category){ %>
+                    <option value="<%= category.id %>" ><%= category.title %></option>
+                  <% }) %>
+                </select>
+              </td>
+              <td>
+                <a id="addNew" class="btn btn-small btn-primary"  onclick="addNewBasicIngred();">Add New</a>
+                <a id="addNew" class="btn btn-small btn-secondary"  onclick="cancelNewBasicIngred();">Cancel</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+
+  </div>
+</div>
+
+<script>
+
+  function newBasicIngred() {
+    $('.add-new-basic-ingred').addClass('d-none');
+    $('.new-basic-ingred-fields').removeClass('d-none');
+  }
+
+  function cancelNewBasicIngred() {
+    $('.add-new-basic-ingred').removeClass('d-none');
+    $('.new-basic-ingred-fields').addClass('d-none');
+  }
+
+  function addNewBasicIngred(){
+    var data = {
+      type: 1, // For Basic ingredient, Type will always be 1.
+      title: $("input#basicIngred-title").val(),
+      description: $("input#basicIngred-description").val(),
+      measurement: $("select#basicIngred-measurement").val(),
+      category: $("select#basicIngred-category").val()
+
+    };
+    $.ajax({
+      type: "POST",
+      url: '/substance',
+      data: JSON.stringify(data),
+      contentType:"application/json; charset=utf-8",
+      dataType:"json",
+      success: function() {
+        location.reload();
+      }
+    });
+  }
+
+</script>

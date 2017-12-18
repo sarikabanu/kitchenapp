@@ -55,10 +55,10 @@
                   </select>
                 </td>
                 <td>
-                  <a id="edit-<%= step.id %>" class="btn btn-small btn-warning" href="#" onclick="editStep(<%= step.id %>);">Edit</a>
-                  <a id="save-<%= step.id %>" class="btn btn-small btn-secondary d-none" href="#" onclick="saveStep(<%= step.id %>);">Save</a>
-                  <a id="cancel-<%= step.id %>" class="btn btn-small btn-light d-none" href="#" onclick="cancelEditStep(<%= step.id %>);">Cancel</a>
-                  <a id="delete-<%= step.id %>" class="btn btn-small btn-danger" href="#" onclick="deleteStep(<%= step.id %>);">Delete</a>
+                  <a id="edit-<%= step.id %>" class="btn btn-small btn-warning"  onclick="editStep(<%= step.id %>);">Edit</a>
+                  <a id="save-<%= step.id %>" class="btn btn-small btn-secondary d-none"  onclick="saveStep(<%= step.id %>);">Save</a>
+                  <a id="cancel-<%= step.id %>" class="btn btn-small btn-light d-none"  onclick="cancelEditStep(<%= step.id %>);">Cancel</a>
+                  <a id="delete-<%= step.id %>" class="btn btn-small btn-danger"  onclick="deleteStep(<%= step.id %>);">Delete</a>
                 </td>
               </tr>
             <% }) %>
@@ -82,7 +82,7 @@
                 </select>
               </td>
               <td>
-                <a id="addNew" class="btn btn-small btn-primary" href="#" onclick="addNewStep();">Add New</a>
+                <a id="addNew" class="btn btn-small btn-primary"  onclick="addNewStep();">Add New</a>
               </td>
             </tr>
           </tbody>

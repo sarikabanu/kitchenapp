@@ -1,12 +1,12 @@
 /**
- * Job.js
+ * Recipe_sub_tasks.js
  *
- * @description :: The Job table
+ * @description :: The Recipe_sub_tasks table
  * @docs        :: http://sailsjs.org/#!documentation/models
  */
 
 module.exports = {
-  tableName: 'job',
+  tableName: 'recipe_sub_tasks',
   autoCreatedAt: false,
   autoUpdatedAt: false,
   attributes: {
@@ -17,37 +17,33 @@ module.exports = {
       primaryKey: true,
       size: 11
     },
+    title: {
+      type: 'string',
+      required: true,
+      size: 45
+    },
+    description: {
+      type: 'string',
+      required: false,
+      size: 45,
+      defaultsTo: null
+    },
     updated: {
       type: 'datetime',
       required: false,
-      // defaultsTo: 'CURRENT_TIMESTAMP'
+      // defaultsTo: null
     },
-    date: {
-      type: 'datetime',
-      required: false,
-      // defaultsTo: 'CURRENT_TIMESTAMP'
-    },
-    recipe: {
+    main_recipe_task: {
       type: 'integer',
       required: true,
       index: true,
       size: 11,
       model: 'recipe'
     },
-    quantity: {
-      type: 'float',
-      required: true
-    },
-    completed: {
-      type: 'float',
-      required: false
-    },
-    status: {
+    sequence: {
       type: 'integer',
       required: true,
-      index: true,
-      size: 11,
-      model: 'status'
+      size: 11
     }
   }
 };

@@ -1,0 +1,90 @@
+
+<div class="container-fluid">
+  <div class="row">
+
+    <main role="main" class="col-sm-12 ml-sm-auto col-md-12 pt-3">
+      <h1>Availibilty of Basic Ingredients with Current Demand <a class="float-right" href="/inventory/inventory_balance" >Go back</a></h1>
+
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Material</th>
+              <th>Available Balance</th>
+              <th>Last updated</th>
+              <th>Current Demand</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% var index = 1; %>
+            <% for (var substanceId in netStockWithRequirements){ %>
+              <tr id="basicIngredsBalance-<%= netStockWithRequirements[substanceId] %>">
+                <td>
+                  <%= index++ %>
+                </td>
+                <td>
+                  <span><%= netStockWithRequirements[substanceId].net_stock.substance.title %></span>
+                </td>
+                <td>
+                  <span><%= netStockWithRequirements[substanceId].net_stock.net_quantity %></span>
+                  <span><%= measurementsMap[netStockWithRequirements[substanceId].net_stock.substance.measurement] %></span>
+                </td>
+                <td>
+                  <span><%= sails.moment(netStockWithRequirements[substanceId].net_stock.updated).format('DD MMM YYYY') %></span>
+                </td>
+                <td>
+                  <span><%= netStockWithRequirements[substanceId].requirement %></span>
+                  <span><%= measurementsMap[netStockWithRequirements[substanceId].net_stock.substance.measurement] %></span>
+                </td>
+                <td>
+                </td>
+              </tr>
+            <% } %>
+            <tr class="d-none">
+              <td><input id="basicIngredsBalance-id" class="d-none"/></td>
+              <td><input id="basicIngredsBalance-title" /></td>
+              <td><input id="basicIngredsBalance-description" /></td>
+              <td>
+                <select id="basicIngredsBalance-substance" class="">
+                  <% basicIngreds.forEach(function(substance){ %>
+                    <option value="<%= substance.id %>" ><%= substance.title %></option>
+                  <% }) %>
+                </select>
+              </td>
+              <td><input id="basicIngredsBalance-net_quantity" /></td>
+              <td>
+                <a id="addNew" class="btn btn-small btn-primary"  onclick="addNewBasicIngredsBalance();">Add New</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+
+  </div>
+</div>
+
+<script>
+
+  function addNewBasicIngredsBalance(){
+    var data = {
+      title: $("input#basicIngredsBalance-title").val(),
+      description: $("input#basicIngredsBalance-description").val(),
+      substance: $("select#basicIngredsBalance-substance").val(),
+      net_quantity: $("input#basicIngredsBalance-net_quantity").val()
+    };
+    $.ajax({
+      type: "POST",
+      url: '/net_stock',
+      data: JSON.stringify(data),
+      contentType:"application/json; charset=utf-8",
+      dataType:"json",
+      success: function() {
+        location.reload();
+      }
+    });
+  }
+
+</script>

@@ -36,6 +36,9 @@ module.exports.routes = {
 
   '/admin': { view: 'admin/index' },
   '/mobile': { view: 'mobile/index' },
+  '/inventory': { view: 'inventory/index' },
+  '/menuMgt': { view: 'menuMgt/index' },
+  '/recipeMgt': { view: 'recipeMgt/index' },
 
   /***************************************************************************
   *                                                                          *

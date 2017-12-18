@@ -32,10 +32,10 @@
                   <input id="measurement-description-<%= measurement.id %>" class="d-none" value="<%= measurement.description %>"/>
                 </td>
                 <td>
-                  <a id="edit-<%= measurement.id %>" class="btn btn-small btn-warning" href="#" onclick="editMeasurement(<%= measurement.id %>);">Edit</a>
-                  <a id="save-<%= measurement.id %>" class="btn btn-small btn-secondary d-none" href="#" onclick="saveMeasurement(<%= measurement.id %>);">Save</a>
-                  <a id="cancel-<%= measurement.id %>" class="btn btn-small btn-light d-none" href="#" onclick="cancelEditMeasurement(<%= measurement.id %>);">Cancel</a>
-                  <a id="delete-<%= measurement.id %>" class="btn btn-small btn-danger" href="#" onclick="deleteMeasurement(<%= measurement.id %>);">Delete</a>
+                  <a id="edit-<%= measurement.id %>" class="btn btn-small btn-warning"  onclick="editMeasurement(<%= measurement.id %>);">Edit</a>
+                  <a id="save-<%= measurement.id %>" class="btn btn-small btn-secondary d-none"  onclick="saveMeasurement(<%= measurement.id %>);">Save</a>
+                  <a id="cancel-<%= measurement.id %>" class="btn btn-small btn-light d-none"  onclick="cancelEditMeasurement(<%= measurement.id %>);">Cancel</a>
+                  <a id="delete-<%= measurement.id %>" class="btn btn-small btn-danger"  onclick="deleteMeasurement(<%= measurement.id %>);">Delete</a>
                 </td>
               </tr>
             <% }) %>
@@ -44,7 +44,7 @@
               <td><input id="measurement-title" /></td>
               <td><input id="measurement-description" /></td>
               <td>
-                <a id="addNew" class="btn btn-small btn-primary" href="#" onclick="addNewMeasurement();">Add New</a>
+                <a id="addNew" class="btn btn-small btn-primary"  onclick="addNewMeasurement();">Add New</a>
               </td>
             </tr>
           </tbody>

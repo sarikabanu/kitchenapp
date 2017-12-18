@@ -55,10 +55,10 @@
                   <input id="composition-proportion-<%= composition.id %>" class="d-none" value="<%= composition.proportion %>"/>
                 </td>
                 <td>
-                  <a id="edit-<%= composition.id %>" class="btn btn-small btn-warning" href="#" onclick="editComposition(<%= composition.id %>);">Edit</a>
-                  <a id="save-<%= composition.id %>" class="btn btn-small btn-secondary d-none" href="#" onclick="saveComposition(<%= composition.id %>);">Save</a>
-                  <a id="cancel-<%= composition.id %>" class="btn btn-small btn-light d-none" href="#" onclick="cancelEditComposition(<%= composition.id %>);">Cancel</a>
-                  <a id="delete-<%= composition.id %>" class="btn btn-small btn-danger" href="#" onclick="deleteComposition(<%= composition.id %>);">Delete</a>
+                  <a id="edit-<%= composition.id %>" class="btn btn-small btn-warning"  onclick="editComposition(<%= composition.id %>);">Edit</a>
+                  <a id="save-<%= composition.id %>" class="btn btn-small btn-secondary d-none"  onclick="saveComposition(<%= composition.id %>);">Save</a>
+                  <a id="cancel-<%= composition.id %>" class="btn btn-small btn-light d-none"  onclick="cancelEditComposition(<%= composition.id %>);">Cancel</a>
+                  <a id="delete-<%= composition.id %>" class="btn btn-small btn-danger"  onclick="deleteComposition(<%= composition.id %>);">Delete</a>
                 </td>
               </tr>
             <% }) %>
@@ -82,7 +82,7 @@
               </td>
               <td><input id="composition-proportion" /></td>
               <td>
-                <a id="addNew" class="btn btn-small btn-primary" href="#" onclick="addNewComposition();">Add New</a>
+                <a id="addNew" class="btn btn-small btn-primary"  onclick="addNewComposition();">Add New</a>
               </td>
             </tr>
           </tbody>

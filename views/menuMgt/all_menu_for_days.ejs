@@ -1,0 +1,48 @@
+
+<div class="container-fluid">
+  <div class="row">
+
+    <main role="main" class="col-sm-12 ml-sm-auto col-md-12 pt-3">
+      <h1>Available Menus <a class="float-right" href="/menuMgt/create_menu_for_day" >Create New Menu</a></h1>
+
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Date</th>
+              <th>Num of Items in Menu</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% allMenuForDays.forEach(function(menu, index){ %>
+              <tr id="menu-<%= index %>">
+                <td>
+                  <%= index+1 %>
+                </td>
+                <td>
+                  <span><%= sails.moment(menu.date).format('DD MMM YYYY') %></span>
+                </td>
+                <td>
+                  <%= menu.count %>
+                </td>
+                <td>
+                  <a id="view-all-menu-items-<%= index %>" class="btn btn-small btn-warning"
+                    href="/menuMgt/menu_for_a_day?selectedDate=<%= sails.moment(menu.date).format('DD-MM-YYYY') %>">
+                    View all Items in Menu
+                  </a>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </main>
+
+  </div>
+</div>
+
+<script>
+
+</script>

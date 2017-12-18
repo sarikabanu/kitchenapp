@@ -2,10 +2,11 @@
 <div class="container-fluid">
   <div class="row">
 
-    <% include index %>
-
-    <main role="main" class="col-sm-9 ml-sm-auto col-md-10 pt-3">
-      <h1>Menu Items / Main Dishes</h1>
+    <main role="main" class="col-sm-12 ml-sm-auto col-md-12 pt-3">
+      <h1>
+        Menu Items / Dishes
+        <a class="float-right" href="/menuMgt/all_menu_for_days" >Go back</a>
+      </h1>
 
       <div class="table-responsive">
         <table class="table table-striped">
@@ -16,14 +17,15 @@
               <th>Description</th>
               <th>Measurement</th>
               <th>Category</th>
+              <th>Type</th>
               <th></th>
             </tr>
           </thead>
           <tbody>
-            <% allMenuItems.forEach(function(menuItem){ %>
+            <% allMenuItems.forEach(function(menuItem, index){ %>
               <tr id="menuItem-<%= menuItem.id %>">
                 <td>
-                  <%= menuItem.id %>
+                  <%= index+1 %>
                 </td>
                 <td>
                   <span><%= menuItem.title %></span>
@@ -47,6 +49,13 @@
                     <% categories.forEach(function(category){ %>
                       <option value="<%= category.id %>" <% if(menuItem.category.id == category.id){ %> selected <% } %> ><%= category.title %></option>
                     <% }) %>
+                  </select>
+                </td>
+                <td>
+                  <span><%= menuItem.type.title %></span>
+                  <select id="menuItem-type-<%= menuItem.id %>" class="d-none" >
+                    <option value="3" <% if(menuItem.type.id == 3){ %> selected <% } %> >Main Dish</option>
+                    <option value="4" <% if(menuItem.type.id == 4){ %> selected <% } %> >Associated Dish</option>
                   </select>
                 </td>
                 <td>
@@ -76,6 +85,12 @@
                 </select>
               </td>
               <td>
+                <select id="menuItem-type" class="" >
+                  <option value="3" >Main Dish</option>
+                  <option value="4" >Associated Dish</option>
+                </select>
+              </td>
+              <td>
                 <a id="addNew" class="btn btn-small btn-primary"  onclick="addNewMenuItem();">Add New</a>
               </td>
             </tr>
@@ -90,12 +105,11 @@
 <script>
   function addNewMenuItem(){
     var data = {
-      type: 3, // For Menu Item, Type will always be 3.
       title: $("input#menuItem-title").val(),
       description: $("input#menuItem-description").val(),
       measurement: $("select#menuItem-measurement").val(),
-      category: $("select#menuItem-category").val()
-
+      category: $("select#menuItem-category").val(),
+      category: $("select#menuItem-type").val()
     };
     $.ajax({
       type: "POST",
@@ -145,7 +159,8 @@
       title: $("input#menuItem-title-"+id).val(),
       description: $("input#menuItem-description-"+id).val(),
       measurement: $("select#menuItem-measurement-"+id).val(),
-      category: $("select#menuItem-category-"+id).val()
+      category: $("select#menuItem-category-"+id).val(),
+      type: $("select#menuItem-type-"+id).val()
     };
     $.ajax({
       type: "PUT",
