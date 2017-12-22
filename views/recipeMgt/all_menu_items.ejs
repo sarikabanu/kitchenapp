@@ -1,0 +1,79 @@
+
+<div class="container-fluid">
+  <div class="row">
+
+    <main role="main" class="col-sm-12 ml-sm-auto col-md-12 pt-3">
+      <h1>
+        Available Menu Items
+      </h1>
+
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Name</th>
+              <th>Description</th>
+              <th>Measurement</th>
+              <th>Category</th>
+              <th>Type</th>
+              <th>Recipe Available</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% allMenuItems.forEach(function(menuItem, index){ %>
+              <tr id="menuItem-<%= menuItem.id %>">
+                <td>
+                  <%= index+1 %>
+                </td>
+                <td>
+                  <span><%= menuItem.title %></span>
+                </td>
+                <td>
+                  <span><%= menuItem.description %></span>
+                </td>
+                <td>
+                  <span><%= menuItem.measurement.title %></span>
+                </td>
+                <td>
+                  <span><%= menuItem.category.title %></span>
+                </td>
+                <td>
+                  <span><%= menuItem.type.title %></span>
+                </td>
+                <td>
+                  <% if(menuItem.recipe_available <= 0){ %>
+                    <span>No</span>
+                  <% } else { %>
+                    <span>Yes</span>
+                  <% } %>
+                </td>
+                <td>
+                  <% if(menuItem.recipe_available <= 0){ %>
+                    <a class="btn btn-lg btn-primary" href="/recipeMgt/recipe_for_menu_item?selectedMenuItemId=<%= menuItem.id %>" >Create Recipe</a>
+                  <% } else { %>
+                    <a class="btn btn-lg btn-warning" href="/recipeMgt/recipe_for_menu_item?selectedMenuItemId=<%= menuItem.id %>" >View/Edit Recipe</a>
+                  <% } %>
+                </td>
+              </tr>
+            <% }) %>
+            <tr>
+              <td></td>
+              <td><a class="btn btn-lg btn-success" href="/recipeMgt/recipe_for_menu_item" >Create New Item with Recipe</a></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+
+  </div>
+</div>
+
+<script>
+</script>

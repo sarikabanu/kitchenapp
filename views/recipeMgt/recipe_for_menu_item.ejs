@@ -1,0 +1,415 @@
+
+<div class="container-fluid">
+  <div class="row">
+
+    <main role="main" class="col-sm-12 ml-sm-auto col-md-12 pt-3">
+      <h1>
+        Create / View / Edit - Recipe.
+        <a class="float-right btn btn-lg btn-success" onclick="releaseRecipe();" >Release</a>
+        <span class="float-right">&nbsp;&nbsp;&nbsp;&nbsp;<span>
+        <a class="float-right btn btn-lg btn-secondary" href="/recipeMgt/all_menu_items" >Cancel</a>
+      </h1>
+
+      <hr/>
+
+      <h5>
+        Define Recipe (Menu item that will be prepared at the end of Recipe).
+      </h5>
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Name</th>
+              <th>Description</th>
+              <th>Measurement</th>
+              <th>Category</th>
+              <th>Type</th>
+              <th>Recipe Available</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if(selectedMenuItem && selectedMenuItem.length > 0) { %>
+              <% selectedMenuItem.forEach(function(menuItem, index){ %>
+                <tr id="menuItem-<%= menuItem.id %>">
+                  <td>
+                    <%= menuItem.id %>
+                  </td>
+                  <td>
+                    <span><%= menuItem.title %></span>
+                    <input id="menuItem-title-<%= menuItem.id %>" class="d-none" value="<%= menuItem.title %>"/>
+                  </td>
+                  <td>
+                    <span><%= menuItem.description %></span>
+                    <input id="menuItem-description-<%= menuItem.id %>" class="d-none" value="<%= menuItem.description %>"/>
+                  </td>
+                  <td>
+                    <span><%= menuItem.measurement.title %></span>
+                    <select id="menuItem-measurement-<%= menuItem.id %>" class="d-none">
+                      <% measurements.forEach(function(measurement){ %>
+                        <option value="<%= measurement.id %>" <% if(menuItem.measurement.id == measurement.id){ %> selected <% }%> ><%= measurement.title %></option>
+                      <% }) %>
+                    </select>
+                  </td>
+                  <td>
+                    <span><%= menuItem.category.title %></span>
+                    <select id="menuItem-category-<%= menuItem.id %>" class="d-none" >
+                      <% categories.forEach(function(category){ %>
+                        <option value="<%= category.id %>" <% if(menuItem.category.id == category.id){ %> selected <% } %> ><%= category.title %></option>
+                      <% }) %>
+                    </select>
+                  </td>
+                  <td>
+                    <span><%= menuItem.type.title %></span>
+                    <select id="menuItem-type-<%= menuItem.id %>" class="d-none" >
+                      <option value="3" <% if(menuItem.type.id == 3){ %> selected <% } %> >Main Dish</option>
+                      <option value="4" <% if(menuItem.type.id == 4){ %> selected <% } %> >Associated Dish</option>
+                    </select>
+                  </td>
+                  <td>
+                    <a id="edit-<%= menuItem.id %>" class="btn btn-small btn-warning"  onclick="editMenuItem(<%= menuItem.id %>);">Edit</a>
+                    <a id="save-<%= menuItem.id %>" class="btn btn-small btn-secondary d-none"  onclick="saveMenuItem(<%= menuItem.id %>);">Save</a>
+                    <a id="cancel-<%= menuItem.id %>" class="btn btn-small btn-light d-none"  onclick="cancelEditMenuItem(<%= menuItem.id %>);">Cancel</a>
+                  </td>
+                </tr>
+              <% }) %>
+            <% } else { %>
+              <tr>
+                <td><input id="menuItem-id" class="d-none"/></td>
+                <td><input id="menuItem-title" /></td>
+                <td><input id="menuItem-description" /></td>
+                <td>
+                  <select id="menuItem-measurement" class="">
+                    <% measurements.forEach(function(measurement){ %>
+                      <option value="<%= measurement.id %>" ><%= measurement.title %></option>
+                    <% }) %>
+                  </select>
+                </td>
+                <td>
+                  <select id="menuItem-category" class="" >
+                    <% categories.forEach(function(category){ %>
+                      <option value="<%= category.id %>" ><%= category.title %></option>
+                    <% }) %>
+                  </select>
+                </td>
+                <td>
+                  <select id="menuItem-type" class="" >
+                    <option value="3" >Main Dish</option>
+                    <option value="4" >Associated Dish</option>
+                  </select>
+                </td>
+                <td>
+                  <a id="addNew" class="btn btn-small btn-primary"  onclick="addNewMenuItem();">Add New</a>
+                </td>
+              </tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+
+      <hr/>
+      <hr/>
+
+      <h3>
+        Station-wise Tasks for this Recipe.
+      </h3>
+
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Sequence</th>
+              <th>Step Title</th>
+              <th>Recipe Title</th>
+              <th>Recipe Description</th>
+              <th><a class="btn btn-small btn-success" href="/recipeMgt/all_recipe_tasks" >View All Recipe Tasks</a></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if(allSteps && allSteps.length > 0) { %>
+              <% allSteps.forEach(function(step, index){ %>
+                <tr id="step-<%= step.id %>">
+                  <td>
+                    <span><%= step.sequence %></span>
+                    <input id="step-sequence-<%= step.id %>" class="d-none" value="<%= step.sequence %>"/>
+                  </td>
+                  <td>
+                    <span><%= step.title %></span>
+                    <input id="step-title-<%= step.id %>" class="d-none" value="<%= step.title %>"/>
+                  </td>
+                  <td>
+                    <span><%= step.recipe.title %></span>
+                    <select id="step-recipe-<%= step.id %>" class="d-none" value="<%= step.recipe.id %>">
+                      <% allRecipeTasks.forEach(function(recipe){ %>
+                        <option value="<%= recipe.id %>" <% if(step.recipe.id == recipe.id){ %> selected <% }%> ><%= recipe.title %></option>
+                      <% }) %>
+                    </select>
+                  </td>
+                  <td>
+                    <span><%= step.recipe.description %></span>
+                  </td>
+                  <td>
+                    <a id="edit-<%= step.id %>" class="btn btn-small btn-warning"  onclick="editStep(<%= step.id %>);">Edit</a>
+                    <a id="save-<%= step.id %>" class="btn btn-small btn-secondary d-none"  onclick="saveStep(<%= step.id %>);">Save</a>
+                    <a id="cancel-<%= step.id %>" class="btn btn-small btn-light d-none"  onclick="cancelEditStep(<%= step.id %>);">Cancel</a>
+                    <a id="delete-<%= step.id %>" class="btn btn-small btn-danger"  onclick="deleteStep(<%= step.id %>);">Delete</a>
+                    <a id="view-recipe-<%= step.id %>" class="btn btn-small btn-secondary" href="/recipeMgt/recipe_task_details?selectedRecipeTaskId=<%= step.recipe.id %>" >View Details</a>
+                  </td>
+                </tr>
+              <% }) %>
+            <% } %>
+            <% if(selectedMenuItemId && selectedMenuItemId > 0) { %>
+              <tr>
+                <td><input id="step-sequence" /></td>
+                <td><input id="step-title" /></td>
+                <td>
+                  <select id="step-recipe" class="">
+                    <% allRecipeTasks.forEach(function(recipe){ %>
+                      <option value="<%= recipe.id %>" ><%= recipe.title %></option>
+                    <% }) %>
+                  </select>
+                </td>
+                <td></td>
+                <td>
+                  <a id="addNew" class="btn btn-small btn-primary"  onclick="addNewStep();">Add New Step to Recipe</a>
+                </td>
+              </tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+
+
+      <hr/>
+      <hr/>
+
+      <h3>
+        Ingredients used in the recipe, with propotions.  (Ingredients and proportions are derived from Step!)
+      </h3>
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Name</th>
+              <th>Description</th>
+              <th>Measurement</th>
+              <th>Proportion</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if(basicIngredients && basicIngredients.length > 0) { %>
+              <% basicIngredients.forEach(function(basicIngred, index){ %>
+                <tr id="basicIngred-<%= basicIngred.composition.id %>">
+                  <td id="basicIngred-id-<%= basicIngred.composition.id %>">
+                    <%= basicIngred.composition.id %>
+                  </td>
+                  <td id="basicIngred-title-<%= basicIngred.composition.title %>">
+                    <span><%= basicIngred.composition.title %></span>
+                  </td>
+                  <td id="basicIngred-description-<%= basicIngred.composition.description %>">
+                    <span><%= basicIngred.composition.description %></span>
+                  </td>
+                  <td id="basicIngred-measurement-<%= basicIngred.composition.measurement %>">
+                    <span><%= basicIngred.composition.measurement %></span>
+                  </td>
+                  <td id="basicIngred-category-<%= basicIngred.proportion %>">
+                    <span><%= basicIngred.proportion %></span>
+                  </td>
+                </tr>
+              <% }) %>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+
+    </main>
+
+  </div>
+</div>
+
+<script>
+
+  var recipeMap = {};
+
+  var selectedMenuItemId;
+  <% if(selectedMenuItemId){ %>
+    selectedMenuItemId = <%= selectedMenuItemId %>;
+  <% } %>
+  console.log("***************", selectedMenuItemId);
+
+  var menuItem = [];
+  <% if(selectedMenuItem && selectedMenuItem.length > 0) { %>
+    <% selectedMenuItem.forEach(function(menuItem, index){ %>
+      menuItem.push(JSON.parse('<%- JSON.stringify(menuItem) %>'));
+    <% }) %>
+  <% } %>
+  console.log("*********11111******", menuItem);
+
+  var basicIngredients = [];
+  <% if(basicIngredients && basicIngredients.length > 0) { %>
+    <% basicIngredients.forEach(function(basicIngred, index){ %>
+      basicIngredients.push(JSON.parse('<%- JSON.stringify(basicIngred) %>'));
+    <% }) %>
+  <% } %>
+  console.log("*********22222******", basicIngredients);
+
+  var intmdItems = [];
+  <% if(intmdItems && intmdItems.length > 0) { %>
+    <% intmdItems.forEach(function(intmdItem, index){ %>
+      intmdItems.push(JSON.parse('<%- JSON.stringify(intmdItem) %>'));
+    <% }) %>
+  <% } %>
+  console.log("*********33333******", intmdItems);
+
+  var assocItems = [];
+  <% if(assocItems && assocItems.length > 0) { %>
+    <% assocItems.forEach(function(assocItem, index){ %>
+      assocItems.push(JSON.parse('<%- JSON.stringify(assocItem) %>'));
+    <% }) %>
+  <% } %>
+  console.log("*********44444******", assocItems);
+
+  var allSubstances = {};
+  <% if(allSubstances && allSubstances.length > 0) { %>
+    <% allSubstances.forEach(function(substance, index){ %>
+      allSubstances[<%= substance.id %>] = JSON.parse('<%- JSON.stringify(substance) %>');
+    <% }) %>
+  <% } %>
+  console.log("*********5555******", allSubstances);
+
+
+  ///////////////////////////////////////////////////////////////////
+
+  function addNewMenuItem(){
+    var data = {
+      title: $("input#menuItem-title").val(),
+      description: $("input#menuItem-description").val(),
+      measurement: $("select#menuItem-measurement").val(),
+      category: $("select#menuItem-category").val(),
+      type: $("select#menuItem-type").val()
+    };
+    $.ajax({
+      type: "POST",
+      url: '/substance',
+      data: JSON.stringify(data),
+      contentType:"application/json; charset=utf-8",
+      dataType:"json",
+      success: function(result) {
+        window.location = "/recipeMgt/create_recipe?selectedMenuItemId=" + result[0].id;
+      }
+    });
+  }
+
+  function editMenuItem(id){
+    $("tr#menuItem-" + id + " input").removeClass('d-none');
+    $("tr#menuItem-" + id + " select").removeClass('d-none');
+    $("tr#menuItem-" + id + " span").addClass('d-none');
+    $("a#edit-" + id).addClass('d-none');
+    $("a#delete-" + id).addClass('d-none');
+    $("a#save-" + id).removeClass('d-none');
+    $("a#cancel-" + id).removeClass('d-none');
+  }
+
+  function cancelEditMenuItem(id){
+    $("tr#menuItem-" + id + " input").addClass('d-none');
+    $("tr#menuItem-" + id + " select").addClass('d-none');
+    $("tr#menuItem-" + id + " span").removeClass('d-none');
+    $("a#edit-" + id).removeClass('d-none');
+    $("a#delete-" + id).removeClass('d-none');
+    $("a#save-" + id).addClass('d-none');
+    $("a#cancel-" + id).addClass('d-none');
+  }
+
+  function saveMenuItem(id) {
+    var data = {
+      id: id,
+      title: $("input#menuItem-title-"+id).val(),
+      description: $("input#menuItem-description-"+id).val(),
+      measurement: $("select#menuItem-measurement-"+id).val(),
+      category: $("select#menuItem-category-"+id).val(),
+      type: $("select#menuItem-type-"+id).val()
+    };
+    $.ajax({
+      type: "PUT",
+      url: '/substance/' + id,
+      data: data,
+      success: function() {
+        location.reload();
+      }
+    });
+  }
+
+  ///////////////////////////////////////////////////////////////////
+
+  function addNewStep(){
+    var data = {
+      title: $("input#step-title").val(),
+      // description: $("input#step-description").val(),
+      substance: selectedMenuItemId,
+      sequence: $("input#step-sequence").val(),
+      recipe: $("select#step-recipe").val(),
+    };
+    $.ajax({
+      type: "POST",
+      url: '/step',
+      data: JSON.stringify(data),
+      contentType:"application/json; charset=utf-8",
+      dataType:"json",
+      success: function() {
+        location.reload();
+      }
+    });
+  }
+
+  function deleteStep(id){
+    $.ajax({
+      type: "DELETE",
+      url: '/step/' + id,
+      success: function() {
+        location.reload();
+      }
+    });
+  }
+
+  function editStep(id){
+    $("tr#step-" + id + " input").removeClass('d-none');
+    $("tr#step-" + id + " select").removeClass('d-none');
+    $("tr#step-" + id + " span").addClass('d-none');
+    $("a#edit-" + id).addClass('d-none');
+    $("a#delete-" + id).addClass('d-none');
+    $("a#save-" + id).removeClass('d-none');
+    $("a#cancel-" + id).removeClass('d-none');
+  }
+
+  function cancelEditStep(id){
+    $("tr#step-" + id + " input").addClass('d-none');
+    $("tr#step-" + id + " select").addClass('d-none');
+    $("tr#step-" + id + " span").removeClass('d-none');
+    $("a#edit-" + id).removeClass('d-none');
+    $("a#delete-" + id).removeClass('d-none');
+    $("a#save-" + id).addClass('d-none');
+    $("a#cancel-" + id).addClass('d-none');
+  }
+
+  function saveStep(id) {
+    var data = {
+      id: id,
+      title: $("input#step-title-"+id).val(),
+      description: $("input#step-description-"+id).val(),
+      substance: selectedMenuItemId,
+      sequence: $("input#step-sequence-"+id).val(),
+      recipe: $("select#step-recipe-"+id).val(),
+    };
+    $.ajax({
+      type: "PUT",
+      url: '/step/' + id,
+      data: data,
+      success: function() {
+        location.reload();
+      }
+    });
+  }
+
+</script>

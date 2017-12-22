@@ -83,7 +83,7 @@ CREATE INDEX "kitchen_schema"."menu.menu_menu_fk_idx" ON "menu" ("parent");
 CREATE TABLE "kitchen_schema"."recipe"(
   "id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
   "title" VARCHAR(45) NOT NULL,
-  "description" VARCHAR(450) NOT NULL,
+  "description" VARCHAR(1000) NOT NULL,
   "substance" INTEGER,
   "updated" DATETIME DEFAULT CURRENT_TIMESTAMP,
   "duration" INTEGER,
@@ -117,7 +117,7 @@ CREATE INDEX "kitchen_schema"."job.job_status_fk_idx" ON "job" ("status");
 CREATE TABLE "kitchen_schema"."recipe_sub_tasks"(
   "id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
   "title" VARCHAR(45) NOT NULL,
-  "description" VARCHAR(45),
+  "description" VARCHAR(1000),
   "updated" DATETIME,
   "main_recipe_task" INTEGER NOT NULL,
   "sequence" INTEGER NOT NULL,

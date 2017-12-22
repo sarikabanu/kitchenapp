@@ -102,7 +102,8 @@ module.exports = {
     });
 
     Substance.find({
-        type: 3
+        type: 3,
+        recipe_available: true
       })
       .populate('category')
       .populate('measurement')
@@ -210,7 +211,8 @@ module.exports = {
     });
 
     Substance.find({
-        type: [3, 4]
+        type: [3, 4],
+        recipe_available: true
       })
       .populate('category')
       .populate('measurement')
@@ -230,7 +232,8 @@ module.exports = {
    */
   getAllMenuItems: function(req, res) {
     Substance.find({
-        type: [3, 4]
+        type: [3, 4],
+        recipe_available: true
       })
       .populate('category')
       .populate('measurement')

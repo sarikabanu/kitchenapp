@@ -62,21 +62,36 @@ module.exports = {
   afterUpdate: function(values, callback) {
     return updateSubstance(values, callback);
   },
+  afterDestroy: function(values, callback) {
+    return updateSubstance(values, callback, true);
+  }
 };
 
-function updateSubstance(values, callback) {
+function updateSubstance(values, callback, isDelete) {
   Substance.find({
     id: values.substance
   }).exec(function(err, substance) {
-    if(err) return callback(err);
+    if (err) return callback(err);
 
-    if(substance[0].recipe_available === 0){
+    if (isDelete) {
+
       Substance.update({
         id: values.substance
       }, {
-        recipe_available: 1
+        recipe_available: 0
       }).exec();
+
+    } else {
+
+      if (substance[0].recipe_available === false) {
+        Substance.update({
+          id: values.substance
+        }, {
+          recipe_available: 1
+        }).exec();
+      }
     }
+
     return callback();
   });
 
