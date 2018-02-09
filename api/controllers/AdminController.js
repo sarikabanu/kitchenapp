@@ -45,6 +45,25 @@ module.exports = {
   },
 
 
+
+   /**
+   * `AdminController.get_assoc_item()`
+   */
+  get_assoc_item: function (req, res) {
+		var categories = {}, measurements = {};
+		Category.find().exec(function( err, result) {
+			categories = result;
+		});
+		Measurement.find().exec(function( err, result) {
+			measurements = result;
+		});
+
+		Substance.find({type: 4}).populate('category').populate('measurement').exec(function (err, result){
+        return res.json({allAssocItems: result, categories: categories, measurements: measurements});
+    });
+  },
+
+
   /**
    * `AdminController.basic_ingred()`
    */
@@ -480,6 +499,11 @@ module.exports = {
   category: function (req, res) {
 		Category.find().exec(function (err, result){
       return res.view('admin/category', {allCategory: result} );
+    });
+  },
+  getcategory: function (req, res) {
+		Category.find().exec(function (err, result){
+      return res.json({allCategory: result} );
     });
   }
 };

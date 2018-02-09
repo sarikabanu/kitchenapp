@@ -358,6 +358,78 @@ module.exports = {
   },
 
 
+  getrecipetaskdetails: function(req, res) {
+    var selectedRecipeTaskId = req.param('selectedRecipeTaskId');
+    var recipeTask, allRecipeSubSteps, recipeSubstanceId, allCompositions;
+    var substances = {},
+      stations = {};
+
+    Substance.find().exec(function(err, result) {
+      substances = result;
+
+      Station.find().exec(function(err, result) {
+        stations = result;
+
+        if (selectedRecipeTaskId) {
+
+          Recipe.find({
+              id: selectedRecipeTaskId
+            }).populate('substance')
+            .populate('station')
+            .exec(function(err, result) {
+              recipeTask = result;
+              recipeSubstanceId = result[0].substance.id;
+
+              Recipe_sub_tasks.find({
+                  main_recipe_task: selectedRecipeTaskId
+                }).populate('main_recipe_task')
+                .exec(function(err, result) {
+                  allRecipeSubSteps = result;
+
+                  Composition.find({
+                      substance: recipeSubstanceId
+                    }).populate('composition')
+                    .populate('substance')
+                    .exec(function(err, result) {
+                      allCompositions = result;
+
+                      return res.json({
+                        recipeTask: recipeTask,
+                        selectedRecipeTaskId: selectedRecipeTaskId,
+                        allRecipeSubSteps: allRecipeSubSteps,
+                        substances: substances,
+                        recipeSubstanceId: recipeSubstanceId,
+                        allCompositions: allCompositions,
+                        stations: stations
+                      });
+
+                    });
+
+                });
+
+            });
+        } else {
+
+          return res.json({
+            recipeTask: recipeTask,
+            selectedRecipeTaskId: selectedRecipeTaskId,
+            allRecipeSubSteps: allRecipeSubSteps,
+            substances: substances,
+            recipeSubstanceId: recipeSubstanceId,
+            allCompositions: allCompositions,
+            stations: stations
+          });
+
+        }
+
+
+      });
+
+    });
+
+  },
+
+
   /**
    * `RecipeMgtController.all_recipe_tasks()`
    */
